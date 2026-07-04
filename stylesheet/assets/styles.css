@@ -106,6 +106,12 @@ label{font-size:13px; color:var(--muted);}
   font-size:14px;
 }
 .toast.error{background:#991b1b;}
+.login-card{width:min(760px, 100%);}
+.login-card .form{max-width:none;}
+.login-demo{margin-top:18px;}
+.login-demo h3{font-size:16px; margin-bottom:10px;}
+.login-demo table{font-size:13px;}
+.login-demo .btn{padding:7px 10px;}
 @media(max-width:900px){
   .sidebar{width:240px; z-index:15;}
   .main{margin-left:0;}

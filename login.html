@@ -4,8 +4,8 @@
 <title>Login</title>
 <link rel="stylesheet" href="stylesheet/assets/styles.css">
 </head>
-<body style="display:grid; place-items:center; min-height:100vh;">
-  <div class="card" style="width:360px;">
+<body style="display:grid; place-items:center; min-height:100vh; padding:24px;">
+  <div class="card login-card">
     <h2 style="margin-bottom:16px;">Sign In</h2>
     <form class="form">
       <div><label>Role</label>
@@ -15,6 +15,18 @@
       <div><label>Password</label><input class="input" type="password" placeholder="••••••"></div>
       <a href="darshboard.html" class="btn" style="text-align:center;">Login</a>
     </form>
+    <div class="login-demo">
+      <h3>Login Details</h3>
+      <table>
+        <thead><tr><th>Department</th><th>Email</th><th>Password</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Admin</td><td>admin@bfs.edu</td><td>admin123</td><td><button class="btn ghost" type="button" data-login-role="Admin" data-login-email="admin@bfs.edu" data-login-password="admin123">Use</button></td></tr>
+          <tr><td>Teacher</td><td>teacher@bfs.edu</td><td>teacher123</td><td><button class="btn ghost" type="button" data-login-role="Teacher" data-login-email="teacher@bfs.edu" data-login-password="teacher123">Use</button></td></tr>
+          <tr><td>Student</td><td>student@bfs.edu</td><td>student123</td><td><button class="btn ghost" type="button" data-login-role="Student" data-login-email="student@bfs.edu" data-login-password="student123">Use</button></td></tr>
+          <tr><td>Parent</td><td>parent@bfs.edu</td><td>parent123</td><td><button class="btn ghost" type="button" data-login-role="Parent" data-login-email="parent@bfs.edu" data-login-password="parent123">Use</button></td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 <script src="stylesheet/assets/app.js"></script>
 </body>

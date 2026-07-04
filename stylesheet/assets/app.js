@@ -246,11 +246,28 @@ const setupLogin = () => {
   const form = login?.closest("form");
   if (!login || !form) return;
 
+  const credentials = {
+    Admin: { email: "admin@bfs.edu", password: "admin123", page: "darshboard.html" },
+    Teacher: { email: "teacher@bfs.edu", password: "teacher123", page: "teacher-portal.html" },
+    Student: { email: "student@bfs.edu", password: "student123", page: "darshboard.html" },
+    Parent: { email: "parent@bfs.edu", password: "parent123", page: "darshboard.html" },
+  };
+
+  document.querySelectorAll("[data-login-role]").forEach((button) => {
+    button.addEventListener("click", () => {
+      form.querySelector("#login-role").value = button.dataset.loginRole;
+      form.querySelector('input[type="email"]').value = button.dataset.loginEmail;
+      form.querySelector('input[type="password"]').value = button.dataset.loginPassword;
+      toast(`${button.dataset.loginRole} login filled.`);
+    });
+  });
+
   login.addEventListener("click", (event) => {
     event.preventDefault();
     const email = form.querySelector('input[type="email"]');
     const password = form.querySelector('input[type="password"]');
     const role = form.querySelector("#login-role")?.value || "Admin";
+    const account = credentials[role];
 
     if (!email.value.trim() || !password.value.trim()) {
       (email.value.trim() ? password : email).focus();
@@ -258,7 +275,12 @@ const setupLogin = () => {
       return;
     }
 
-    window.location.href = role === "Teacher" ? "teacher-portal.html" : "darshboard.html";
+    if (email.value.trim() !== account.email || password.value.trim() !== account.password) {
+      toast(`Invalid ${role} login details.`, "error");
+      return;
+    }
+
+    window.location.href = account.page;
   });
 };
 
