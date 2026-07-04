@@ -59,8 +59,34 @@
         <a class="btn ghost" href="parent-portal.html">Parent Portal</a>
       </div>
     </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="topbar" style="margin-bottom:12px;">
+        <h3>Teacher Recorded Grades</h3>
+        <a class="btn ghost" href="grades.html">Open Grade Book</a>
+      </div>
+      <table>
+        <thead><tr><th>Teacher</th><th>Student</th><th>Class</th><th>Subject</th><th>Term</th><th>Total</th><th>Grade</th></tr></thead>
+        <tbody id="dashboardRecordedGrades"></tbody>
+      </table>
+    </div>
   </main>
 </div>
+<script>
+  const dashboardGradesBody = document.getElementById("dashboardRecordedGrades");
+  const recordedGrades = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("teacherRecordedGrades")) || [];
+    } catch {
+      return [];
+    }
+  })();
+
+  dashboardGradesBody.innerHTML = recordedGrades.length
+    ? recordedGrades.slice(0, 8).map((item) =>
+      `<tr><td>${item.teacherName}</td><td>${item.studentName}</td><td>${item.className}</td><td>${item.subject}</td><td>${item.term}</td><td>${item.total}/100</td><td><span class="badge ${item.grade === "A" ? "ok" : item.grade === "D" ? "warn" : ""}">${item.grade}</span></td></tr>`
+    ).join("")
+    : '<tr><td colspan="7" style="color:var(--muted);">No teacher-recorded grades yet.</td></tr>';
+</script>
 <script src="stylesheet/assets/sidebar.js"></script>
 <script src="stylesheet/assets/app.js"></script>
 </body>

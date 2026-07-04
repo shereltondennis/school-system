@@ -30,14 +30,32 @@
       </form>
     </div>
     <table>
-      <thead><tr><th>Roll No</th><th>Student</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
-      <tbody>
+      <thead><tr><th>Roll No</th><th>Student</th><th>Class</th><th>Subject</th><th>Teacher</th><th>Term</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
+      <tbody id="adminGradesBody">
         <tr><td>S-1021</td><td>Amara Johnson</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td></tr>
         <tr><td>S-1022</td><td>David Mensah</td><td>14</td><td>12</td><td>40</td><td>66</td><td><span class="badge">C</span></td></tr>
       </tbody>
     </table>
   </main>
 </div>
+<script>
+  const adminGradesBody = document.getElementById("adminGradesBody");
+  const recordedGrades = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("teacherRecordedGrades")) || [];
+    } catch {
+      return [];
+    }
+  })();
+
+  if (recordedGrades.length) {
+    adminGradesBody.innerHTML = recordedGrades.map((item) =>
+      `<tr><td>${item.studentId}</td><td>${item.studentName}</td><td>${item.className}</td><td>${item.subject}</td><td>${item.teacherName}</td><td>${item.term}</td><td>${item.testOne}</td><td>${item.testTwo}</td><td>${item.exam}</td><td>${item.total}</td><td><span class="badge ${item.grade === "A" ? "ok" : item.grade === "D" ? "warn" : ""}">${item.grade}</span></td></tr>`
+    ).join("");
+  } else {
+    adminGradesBody.innerHTML = '<tr><td>S-1021</td><td>Amara Johnson</td><td>Grade 7A</td><td>Mathematics</td><td>Ms. Evelyn Cole</td><td>Term 2 - 2026</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td></tr><tr><td>S-1022</td><td>David Mensah</td><td>Grade 9B</td><td>Physics</td><td>Ms. Evelyn Cole</td><td>Term 2 - 2026</td><td>14</td><td>12</td><td>40</td><td>66</td><td><span class="badge">C</span></td></tr>';
+  }
+</script>
 <script src="stylesheet/assets/sidebar.js"></script>
 <script src="stylesheet/assets/app.js"></script>
 </body>

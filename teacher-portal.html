@@ -59,6 +59,9 @@
     }
     .lesson-note h4{font-size:14px; margin-bottom:6px;}
     .lesson-note p{color:var(--muted); font-size:14px;}
+    .grade-actions{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+    .grade-actions .btn.active{background:#0f172a;}
+    .record-grade-panel{margin-bottom:12px;}
     @media(max-width:1100px){
       .teacher-profile{grid-template-columns:1fr 1fr;}
     }
@@ -144,8 +147,24 @@
         <h3>Grade Sheet</h3>
         <button class="btn" type="button">Export Report</button>
       </div>
+      <div class="grade-actions">
+        <button class="btn active" type="button" id="reviewGrades">Review Grade</button>
+        <button class="btn ghost" type="button" id="recordNewGrade">Record New Grade</button>
+      </div>
+      <div class="record-grade-panel is-hidden" id="recordGradePanel">
+        <form class="form" style="grid-template-columns:repeat(4, 1fr); gap:12px; max-width:none;">
+          <div><label>Class</label><select class="input" id="gradeClassSelect"></select></div>
+          <div><label>Subject</label><select class="input" id="gradeSubjectSelect"></select></div>
+          <div><label>Student</label><select class="input" id="gradeStudentSelect"></select></div>
+          <div><label>Term</label><select class="input" id="gradeTermSelect"><option>Term 2 - 2026</option><option>Term 1 - 2026</option></select></div>
+          <div><label>Test 1 /20</label><input class="input" id="gradeTestOne" type="number" min="0" max="20" value="0"></div>
+          <div><label>Test 2 /20</label><input class="input" id="gradeTestTwo" type="number" min="0" max="20" value="0"></div>
+          <div><label>Exam /60</label><input class="input" id="gradeExam" type="number" min="0" max="60" value="0"></div>
+          <div style="display:flex; align-items:end;"><button class="btn" type="button" id="recordGradeButton">Record Grade</button></div>
+        </form>
+      </div>
       <table>
-        <thead><tr><th>Roll No</th><th>Student</th><th>Subject</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
+        <thead><tr><th>Roll No</th><th>Student</th><th>Class</th><th>Subject</th><th>Term</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
         <tbody id="gradesBody"></tbody>
       </table>
     </div>
@@ -217,8 +236,21 @@
   const days = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
   const times = ["8:00 AM","9:00 AM","10:00 AM","11:30 AM","1:00 PM"];
   const names = ["Amara Johnson","David Mensah","Sarah Kamara","Leo Martin","Aisha Conteh","Noah Allen"];
+  let activeTeacher = null;
 
   const makeRows = (items, renderer) => items.map(renderer).join("");
+  const getStoredGrades = () => {
+    try {
+      return JSON.parse(localStorage.getItem("teacherRecordedGrades")) || [];
+    } catch {
+      return [];
+    }
+  };
+  const setStoredGrades = (records) => {
+    localStorage.setItem("teacherRecordedGrades", JSON.stringify(records));
+  };
+  const gradeFromTotal = (total) => total >= 80 ? "A" : total >= 70 ? "B" : total >= 60 ? "C" : "D";
+  const clampNumber = (value, max) => Math.min(max, Math.max(0, Number(value) || 0));
   const teacherClassRows = (teacher) => teacher.classes.map((className, index) => ({
     className,
     subject: teacher.subjects[index % teacher.subjects.length],
@@ -240,12 +272,59 @@
     activity: index % 2 === 0 ? "Guided practice, group work, and exit questions." : "Review, demonstration, and short class assessment.",
     resources: index % 2 === 0 ? "Textbook, board notes, worksheet" : "Projector, lab notes, student notebooks"
   }));
+  const seedGradeRows = (teacher, studentRows) => studentRows.slice(0, 4).map((student, index) => {
+    const testOne = 14 + index;
+    const testTwo = 13 + index;
+    const exam = 39 + (index * 4);
+    const total = testOne + testTwo + exam;
+    const grade = gradeFromTotal(total);
+    return {
+      id: `seed-${teacher.id}-${student.id}-${index}`,
+      teacherId: teacher.id,
+      teacherName: teacher.name,
+      studentId: student.id,
+      studentName: student.name,
+      className: student.className,
+      subject: student.subject,
+      term: "Term 2 - 2026",
+      testOne,
+      testTwo,
+      exam,
+      total,
+      grade
+    };
+  });
+  const gradeRowMarkup = (item) =>
+    `<tr><td>${item.studentId}</td><td>${item.studentName}</td><td>${item.className}</td><td>${item.subject}</td><td>${item.term}</td><td>${item.testOne}</td><td>${item.testTwo}</td><td>${item.exam}</td><td>${item.total}</td><td><span class="badge ${item.grade === "A" ? "ok" : item.grade === "D" ? "warn" : ""}">${item.grade}</span></td></tr>`;
+  const populateGradeForm = (teacher, studentRows) => {
+    const classSelect = document.getElementById("gradeClassSelect");
+    const subjectSelect = document.getElementById("gradeSubjectSelect");
+    const studentSelect = document.getElementById("gradeStudentSelect");
+
+    classSelect.innerHTML = teacher.classes.map((className) => `<option>${className}</option>`).join("");
+    subjectSelect.innerHTML = teacher.subjects.map((subject) => `<option>${subject}</option>`).join("");
+
+    const refreshStudents = () => {
+      const className = classSelect.value;
+      const matchingStudents = studentRows.filter((student) => student.className === className);
+      studentSelect.innerHTML = matchingStudents.map((student) =>
+        `<option value="${student.id}">${student.name} (${student.className})</option>`
+      ).join("") || studentRows.map((student) => `<option value="${student.id}">${student.name} (${student.className})</option>`).join("");
+    };
+
+    classSelect.onchange = refreshStudents;
+    subjectSelect.onchange = refreshStudents;
+    refreshStudents();
+  };
 
   const renderTeacher = (teacherId) => {
     const teacher = teachers.find((item) => item.id === teacherId) || teachers[0];
     const classRows = teacherClassRows(teacher);
     const studentRows = teacherStudentRows(teacher);
     const lessonPlans = teacherLessonPlans(teacher);
+    const recordedGrades = getStoredGrades().filter((grade) => grade.teacherId === teacher.id);
+    const gradeRows = [...recordedGrades, ...seedGradeRows(teacher, studentRows)];
+    activeTeacher = { ...teacher, studentRows };
 
     document.getElementById("portalTitle").textContent = isTeacherUser ? `Welcome, ${teacher.name}` : "Teacher Portal";
     document.getElementById("teacherName").textContent = teacher.name;
@@ -264,14 +343,8 @@
     document.getElementById("studentsBody").innerHTML = makeRows(studentRows, (student) =>
       `<tr><td>${student.id}</td><td>${student.name}</td><td>${student.className}</td><td>${student.subject}</td><td><span class="badge ${student.status === "Active" ? "ok" : "warn"}">${student.status}</span></td></tr>`
     );
-    document.getElementById("gradesBody").innerHTML = makeRows(studentRows.slice(0, 4), (student, index) => {
-      const testOne = 14 + index;
-      const testTwo = 13 + index;
-      const exam = 39 + (index * 4);
-      const total = testOne + testTwo + exam;
-      const grade = total >= 80 ? "A" : total >= 70 ? "B" : total >= 60 ? "C" : "D";
-      return `<tr><td>${student.id}</td><td>${student.name}</td><td>${student.subject}</td><td>${testOne}</td><td>${testTwo}</td><td>${exam}</td><td>${total}</td><td><span class="badge ${grade === "A" ? "ok" : ""}">${grade}</span></td></tr>`;
-    });
+    document.getElementById("gradesBody").innerHTML = makeRows(gradeRows, gradeRowMarkup);
+    populateGradeForm(teacher, studentRows);
     document.getElementById("attendanceBody").innerHTML = makeRows(studentRows, (student, index) =>
       `<tr><td>${index + 1}</td><td>${student.name}</td><td>${student.id}</td><td>${student.className}</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>`
     );
@@ -320,6 +393,64 @@
     document.querySelectorAll("#studentsBody tr").forEach((row) => {
       row.classList.toggle("is-hidden", !row.textContent.toLowerCase().includes(query));
     });
+  });
+
+  const reviewGrades = document.getElementById("reviewGrades");
+  const recordNewGrade = document.getElementById("recordNewGrade");
+  const recordGradePanel = document.getElementById("recordGradePanel");
+  reviewGrades.addEventListener("click", () => {
+    recordGradePanel.classList.add("is-hidden");
+    reviewGrades.classList.add("active");
+    recordNewGrade.classList.remove("active");
+    recordNewGrade.classList.add("ghost");
+  });
+  recordNewGrade.addEventListener("click", () => {
+    recordGradePanel.classList.remove("is-hidden");
+    recordNewGrade.classList.add("active");
+    recordNewGrade.classList.remove("ghost");
+    reviewGrades.classList.remove("active");
+  });
+
+  document.getElementById("recordGradeButton").addEventListener("click", () => {
+    if (!activeTeacher) return;
+
+    const studentId = document.getElementById("gradeStudentSelect").value;
+    const student = activeTeacher.studentRows.find((item) => item.id === studentId);
+    const testOne = clampNumber(document.getElementById("gradeTestOne").value, 20);
+    const testTwo = clampNumber(document.getElementById("gradeTestTwo").value, 20);
+    const exam = clampNumber(document.getElementById("gradeExam").value, 60);
+    const total = testOne + testTwo + exam;
+    const grade = gradeFromTotal(total);
+
+    if (!student) {
+      if (typeof toast === "function") toast("Choose a student before recording grade.", "error");
+      return;
+    }
+
+    const records = getStoredGrades();
+    records.unshift({
+      id: `grade-${Date.now()}`,
+      teacherId: activeTeacher.id,
+      teacherName: activeTeacher.name,
+      studentId: student.id,
+      studentName: student.name,
+      className: document.getElementById("gradeClassSelect").value || student.className,
+      subject: document.getElementById("gradeSubjectSelect").value || student.subject,
+      term: document.getElementById("gradeTermSelect").value,
+      testOne,
+      testTwo,
+      exam,
+      total,
+      grade,
+      recordedAt: new Date().toISOString()
+    });
+    setStoredGrades(records);
+    renderTeacher(activeTeacher.id);
+    recordGradePanel.classList.add("is-hidden");
+    reviewGrades.classList.add("active");
+    recordNewGrade.classList.remove("active");
+    recordNewGrade.classList.add("ghost");
+    if (typeof toast === "function") toast("Grade recorded and sent to admin dashboard.");
   });
 
   document.getElementById("saveTeaching").addEventListener("click", () => {
