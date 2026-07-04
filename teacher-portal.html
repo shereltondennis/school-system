@@ -23,10 +23,11 @@
   <aside class="sidebar">
     <h2>BrightFuture</h2>
     <a href="teacher-portal.html" class="active">Teacher Portal</a>
-    <a href="subjects.html">Subjects</a>
-    <a href="classes.html">Classes</a>
-    <a href="attendance.html">Attendance</a>
-    <a href="grades.html">Grades</a>
+    <a href="#subjects">My Subjects</a>
+    <a href="#classes">My Classes</a>
+    <a href="#students">My Students</a>
+    <a href="#grades">My Grades</a>
+    <a href="#attendance">My Attendance</a>
     <a href="index.html">Logout</a>
   </aside>
   <main class="main">
@@ -45,12 +46,13 @@
     <div class="tabs">
       <div class="tab active">Subjects</div>
       <div class="tab">Classes</div>
+      <div class="tab">Students</div>
       <div class="tab">Grades</div>
       <div class="tab">Attendance</div>
       <div class="tab">Schedule</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="subjects">
       <h3 style="margin-bottom:12px;">Assigned Subjects</h3>
       <table>
         <thead><tr><th>Code</th><th>Subject</th><th>Classes</th><th>Weekly Periods</th></tr></thead>
@@ -62,7 +64,7 @@
       </table>
     </div>
 
-    <div class="card" style="margin-top:16px;">
+    <div class="card" id="classes" style="margin-top:16px;">
       <h3 style="margin-bottom:12px;">Assigned Classes</h3>
       <table>
         <thead><tr><th>Class</th><th>Subject</th><th>Room</th><th>Students</th><th>Next Lesson</th></tr></thead>
@@ -74,7 +76,22 @@
       </table>
     </div>
 
-    <div class="card" style="margin-top:16px;">
+    <div class="card" id="students" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">My Students</h3>
+      <div style="margin-bottom:12px;">
+        <input class="input" placeholder="Search my students by name, ID, or class...">
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Subject</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>S-1021</td><td>Amara Johnson</td><td>Grade 7A</td><td>Mathematics</td><td><span class="badge ok">Active</span></td></tr>
+          <tr><td>S-1022</td><td>David Mensah</td><td>Grade 9B</td><td>Physics</td><td><span class="badge warn">Needs Support</span></td></tr>
+          <tr><td>S-1023</td><td>Sarah Kamara</td><td>Grade 8B</td><td>Computer Studies</td><td><span class="badge ok">Active</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" id="grades" style="margin-top:16px;">
       <div class="topbar" style="margin-bottom:12px;">
         <h3>Grade Entry</h3>
         <button class="btn" type="button">Export Report</button>
@@ -93,7 +110,7 @@
       </table>
     </div>
 
-    <div class="card" style="margin-top:16px;">
+    <div class="card" id="attendance" style="margin-top:16px;">
       <div class="topbar" style="margin-bottom:12px;">
         <h3>Take Attendance</h3>
         <button class="btn" type="button">Save Attendance</button>
@@ -113,7 +130,7 @@
       </table>
     </div>
 
-    <div class="card" style="margin-top:16px;">
+    <div class="card" id="schedule" style="margin-top:16px;">
       <h3 style="margin-bottom:12px;">Teaching Schedule</h3>
       <table>
         <thead><tr><th>Day</th><th>Time</th><th>Class</th><th>Subject</th><th>Room</th></tr></thead>

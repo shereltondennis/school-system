@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Portal</title>
+  <link rel="stylesheet" href="stylesheet/assets/styles.css">
+  <style>
+    .tabs{display:flex; gap:8px; border-bottom:1px solid var(--border); margin-bottom:16px; flex-wrap:wrap;}
+    .tab{padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; color:var(--muted);}
+    .tab.active{background:#fff; border:1px solid var(--border); border-bottom:1px solid #fff; color:var(--text); font-weight:600;}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="student-portal.html" class="active">Student Portal</a>
+    <a href="#subjects">My Subjects</a>
+    <a href="#grades">My Grades</a>
+    <a href="#attendance">My Attendance</a>
+    <a href="#fees">My Fees</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1>Student Portal</h1></div>
+    <div class="grid cols-4" style="margin-bottom:16px;">
+      <div class="card stat"><h3>Class</h3><p>7A</p></div>
+      <div class="card stat"><h3>Subjects</h3><p>6</p></div>
+      <div class="card stat"><h3>Average</h3><p>84%</p></div>
+      <div class="card stat"><h3>Attendance</h3><p>96%</p></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active">Subjects</div>
+      <div class="tab">Grades</div>
+      <div class="tab">Attendance</div>
+      <div class="tab">Fees</div>
+    </div>
+    <div class="card" id="subjects">
+      <h3 style="margin-bottom:12px;">My Subjects</h3>
+      <table><thead><tr><th>Subject</th><th>Teacher</th><th>Class</th></tr></thead><tbody>
+        <tr><td>Mathematics</td><td>Ms. Evelyn Cole</td><td>Grade 7A</td></tr>
+        <tr><td>English Language</td><td>Mr. Samuel Wright</td><td>Grade 7A</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card" id="grades" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">My Grades</h3>
+      <table><thead><tr><th>Subject</th><th>Test 1</th><th>Test 2</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>
+        <tr><td>Mathematics</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td></tr>
+        <tr><td>English Language</td><td>16</td><td>15</td><td>48</td><td>79</td><td><span class="badge">B</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="card" id="attendance" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">My Attendance</h3>
+      <table><thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead><tbody>
+        <tr><td>2026-05-04</td><td>Mathematics</td><td><span class="badge ok">Present</span></td></tr>
+        <tr><td>2026-05-05</td><td>English Language</td><td><span class="badge ok">Present</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="card" id="fees" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">My Fees</h3>
+      <table><thead><tr><th>Term Fee</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody>
+        <tr><td>$350</td><td>$350</td><td>$0</td><td><span class="badge ok">Paid</span></td></tr>
+      </tbody></table>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+<script src="stylesheet/assets/app.js"></script>
+</body>
+</html>

@@ -12,6 +12,63 @@ const toast = (message, type = "success") => {
 const moneyToNumber = (value) => Number(String(value).replace(/[^0-9.-]/g, "")) || 0;
 const formatMoney = (value) => `$${Number(value).toLocaleString()}`;
 
+const credentials = {
+  Admin: { email: "admin@bfs.edu", password: "admin123", page: "darshboard.html", name: "Admin User" },
+  Teacher: { email: "teacher@bfs.edu", password: "teacher123", page: "teacher-portal.html", name: "Ms. Evelyn Cole" },
+  Student: { email: "student@bfs.edu", password: "student123", page: "student-portal.html", name: "Amara Johnson" },
+  Parent: { email: "parent@bfs.edu", password: "parent123", page: "parent-portal.html", name: "Mrs. Johnson" },
+};
+
+const getCurrentUser = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem("currentUser")) || null;
+  } catch {
+    return null;
+  }
+};
+
+const setupAccessControl = () => {
+  const page = location.pathname.split("/").pop() || "index.html";
+  const publicPages = ["index.html", "login.html", ""];
+  const portalAccess = {
+    "teacher-portal.html": ["Teacher", "Admin"],
+    "student-portal.html": ["Student", "Admin"],
+    "parent-portal.html": ["Parent", "Admin"],
+  };
+  const adminPages = [
+    "darshboard.html",
+    "teachers.html",
+    "student.html",
+    "subjects.html",
+    "classes.html",
+    "attendance.html",
+    "grades.html",
+    "fees.html",
+    "calender.html",
+    "settings.html",
+  ];
+
+  document.querySelectorAll('a[href="index.html"]').forEach((link) => {
+    link.addEventListener("click", () => sessionStorage.removeItem("currentUser"));
+  });
+
+  if (publicPages.includes(page)) return true;
+
+  const currentUser = getCurrentUser();
+  if (!currentUser) {
+    location.href = "login.html";
+    return false;
+  }
+
+  const allowedRoles = portalAccess[page] || (adminPages.includes(page) ? ["Admin"] : []);
+  if (allowedRoles.length && !allowedRoles.includes(currentUser.role)) {
+    location.href = currentUser.home || "login.html";
+    return false;
+  }
+
+  return true;
+};
+
 const setupSearch = () => {
   document.querySelectorAll('input[placeholder*="Search"]').forEach((input) => {
     const table = input.closest(".card")?.nextElementSibling?.matches("table")
@@ -246,13 +303,6 @@ const setupLogin = () => {
   const form = login?.closest("form");
   if (!login || !form) return;
 
-  const credentials = {
-    Admin: { email: "admin@bfs.edu", password: "admin123", page: "darshboard.html" },
-    Teacher: { email: "teacher@bfs.edu", password: "teacher123", page: "teacher-portal.html" },
-    Student: { email: "student@bfs.edu", password: "student123", page: "darshboard.html" },
-    Parent: { email: "parent@bfs.edu", password: "parent123", page: "darshboard.html" },
-  };
-
   document.querySelectorAll("[data-login-role]").forEach((button) => {
     button.addEventListener("click", () => {
       form.querySelector("#login-role").value = button.dataset.loginRole;
@@ -280,9 +330,19 @@ const setupLogin = () => {
       return;
     }
 
+    sessionStorage.setItem("currentUser", JSON.stringify({
+      role,
+      email: account.email,
+      name: account.name,
+      home: account.page,
+    }));
     window.location.href = account.page;
   });
 };
+
+if (!setupAccessControl()) {
+  throw new Error("Access denied");
+}
 
 setupSearch();
 setupForms();
