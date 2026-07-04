@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="stylesheet/assets/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html" class="active">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html">Classes</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html">Calendar</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Dashboard</h1>
+      <a class="btn" href="student.html#add">Add Student</a>
+    </div>
+    <div class="grid cols-4">
+      <div class="card stat"><h3>Total Students</h3><p>1,240</p></div>
+      <div class="card stat"><h3>Teachers</h3><p>62</p></div>
+      <div class="card stat"><h3>Active Classes</h3><p>38</p></div>
+      <div class="card stat"><h3>Fees Collected</h3><p>$18,420</p></div>
+    </div>
+    <div class="grid cols-2" style="grid-template-columns:2fr 1fr; margin-top:16px;">
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Recent Admissions</h3>
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Class</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Amara Johnson</td><td>Grade 7A</td><td><span class="badge ok">Enrolled</span></td></tr>
+            <tr><td>David Mensah</td><td>Grade 9B</td><td><span class="badge warn">Fees Due</span></td></tr>
+            <tr><td>Sarah Kamara</td><td>Grade 8B</td><td><span class="badge ok">Enrolled</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Today</h3>
+        <p style="color:var(--muted); margin-bottom:10px;">Attendance review for Grade 7A</p>
+        <p style="color:var(--muted); margin-bottom:10px;">Math quiz scheduled</p>
+        <p style="color:var(--muted);">Staff meeting at 2:00 PM</p>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>

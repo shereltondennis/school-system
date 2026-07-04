@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings</title>
+  <link rel="stylesheet" href="stylesheet/assets/styles.css">
+  <style>
+    .tabs{display:flex; gap:8px; border-bottom:1px solid var(--border); margin-bottom:16px;}
+    .tab{padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; color:var(--muted);}
+    .tab.active{background:#fff; border:1px solid var(--border); border-bottom:1px solid #fff; color:var(--text); font-weight:600;}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html">Classes</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html">Calendar</a>
+    <a href="settings.html" class="active">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1>Settings</h1><button class="btn" type="button">Save Changes</button></div>
+    <div class="tabs">
+      <div class="tab active">School Info</div>
+      <div class="tab">Academic Year</div>
+      <div class="tab">Users & Roles</div>
+      <div class="tab">Fees</div>
+    </div>
+    <!-- Tab 1: School Info -->
+    <div class="card">
+      <h3 style="margin-bottom:12px;">School Information</h3>
+      <form class="form">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div><label>School Name</label><input class="input" value="BrightFuture School"></div>
+          <div><label>School Code</label><input class="input" value="BFS-001"></div>
+          <div><label>Principal</label><input class="input" value="Mrs. Esther Cole"></div>
+          <div><label>Contact Number</label><input class="input" value="+231 77 123 4567"></div>
+          <div style="grid-column:1/-1;"><label>Address</label><input class="input" value="12th Street, Monrovia, Liberia"></div>
+          <div><label>School Logo</label><input class="input" type="file"></div>
+          <div><label>School Motto</label><input class="input" value="Excellence Through Learning"></div>
+        </div>
+      </form>
+    </div>
+    <!-- Tab 2: Academic Year -->
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Academic Year & Terms</h3>
+      <form class="form">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+          <div><label>Current Academic Year</label><input class="input" value="2025/2026"></div>
+          <div><label>Term 1 Start</label><input class="input" type="date" value="2025-09-01"></div>
+          <div><label>Term 1 End</label><input class="input" type="date" value="2025-12-15"></div>
+          <div><label>Term 2 Start</label><input class="input" type="date" value="2026-01-05"></div>
+          <div><label>Term 2 End</label><input class="input" type="date" value="2026-03-30"></div>
+          <div><label>Term 3 End</label><input class="input" type="date" value="2026-06-30"></div>
+        </div>
+      </form>
+    </div>
+    <!-- Tab 3: Users & Roles -->
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Users & Roles</h3>
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Admin User</td><td>admin@bfs.edu</td><td>Admin</td><td><span class="badge ok">Active</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
+          <tr><td>Mr. James Doe</td><td>james@bfs.edu</td><td>Teacher</td><td><span class="badge ok">Active</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
+          <tr><td>Mrs. Cole</td><td>principal@bfs.edu</td><td>Principal</td><td><span class="badge ok">Active</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
+        </tbody>
+      </table>
+      <button class="btn" style="margin-top:12px;" type="button">+ Add User</button>
+    </div>
+    <!-- Tab 4: Fees Structure -->
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Fee Structure</h3>
+      <table>
+        <thead><tr><th>Class</th><th>Tuition</th><th>Other Fees</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Grade 7</td><td>$300</td><td>$50</td><td><strong>$350</strong></td></tr>
+          <tr><td>Grade 8</td><td>$320</td><td>$50</td><td><strong>$370</strong></td></tr>
+          <tr><td>Grade 9</td><td>$340</td><td>$50</td><td><strong>$390</strong></td></tr>
+        </tbody>
+      </table>
+      <button class="btn ghost" style="margin-top:12px;" type="button">Edit Fee Structure</button>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>

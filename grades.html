@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+    <title>Grades</title>
+    <link rel="stylesheet" href="stylesheet/assets/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html">Classes</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html" class="active">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html">Calendar</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1>Grades</h1><button class="btn" type="button">Export Report</button></div>
+    <div class="card" style="margin-bottom:16px;">
+      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div><label>Class</label><select class="input"><option>Grade 9B</option><option>Grade 7A</option></select></div>
+        <div><label>Subject</label><select class="input"><option>Mathematics</option><option>English</option></select></div>
+        <div><label>Term</label><select class="input"><option>Term 2 - 2026</option><option>Term 1 - 2026</option></select></div>
+      </form>
+    </div>
+    <table>
+      <thead><tr><th>Roll No</th><th>Student</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
+      <tbody>
+        <tr><td>S-1021</td><td>Amara Johnson</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td></tr>
+        <tr><td>S-1022</td><td>David Mensah</td><td>14</td><td>12</td><td>40</td><td>66</td><td><span class="badge">C</span></td></tr>
+      </tbody>
+    </table>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>

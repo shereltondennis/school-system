@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+    <title>Subjects</title>
+    <link rel="stylesheet" href="stylesheet/assets/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html">Classes</a>
+    <a href="subjects.html" class="active">Subjects</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html">Calendar</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1>Subjects</h1><a class="btn" href="#add">Add Subject</a></div>
+    <table>
+      <thead><tr><th>Code</th><th>Subject Name</th><th>Teacher</th><th>Classes</th></tr></thead>
+      <tbody>
+        <tr><td>MATH101</td><td>Mathematics</td><td>Ms. Evelyn Cole</td><td>7A, 8B, 9B</td></tr>
+        <tr><td>ENG101</td><td>English Language</td><td>Mr. Samuel Wright</td><td>7A, 9B</td></tr>
+      </tbody>
+    </table>
+    <div class="card" id="add" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Add New Subject</h3>
+      <form class="form" style="grid-template-columns:1fr 1fr; gap:12px;">
+        <div><label>Subject Code</label><input class="input" placeholder="SCI101"></div>
+        <div><label>Subject Name</label><input class="input"></div>
+        <div><label>Assigned Teacher</label><select class="input"><option>Ms. Evelyn Cole</option></select></div>
+        <div><label>Taught in Classes</label><input class="input" placeholder="7A, 8B"></div>
+        <div style="grid-column:span 2;"><button class="btn" type="button">Save Subject</button></div>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+    <title>Classes</title>
+    <link rel="stylesheet" href="stylesheet/assets/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html" class="active">Classes</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html">Calendar</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1>Classes</h1><a class="btn" href="#add">Add Class</a></div>
+    <table>
+      <thead><tr><th>Class</th><th>Grade Level</th><th>Class Teacher</th><th>Students</th><th>Room</th></tr></thead>
+      <tbody>
+        <tr><td>7A</td><td>Grade 7</td><td>Mr. Samuel Wright</td><td>34</td><td>Block A-12</td></tr>
+        <tr><td>9B</td><td>Grade 9</td><td>Ms. Evelyn Cole</td><td>31</td><td>Block B-04</td></tr>
+      </tbody>
+    </table>
+    <div class="card" id="add" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Add New Class</h3>
+      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div><label>Class Name</label><input class="input" placeholder="8C"></div>
+        <div><label>Grade Level</label><select class="input"><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option></select></div>
+        <div><label>Class Teacher</label><select class="input"><option>Ms. Evelyn Cole</option><option>Mr. Samuel Wright</option></select></div>
+        <div><label>Room No.</label><input class="input"></div>
+        <div style="grid-column:span 3;"><button class="btn" type="button">Save Class</button></div>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendar</title>
+  <link rel="stylesheet" href="stylesheet/assets/styles.css">
+  <style>
+    .calendar{
+      display:grid;
+      grid-template-columns:repeat(7, 1fr);
+      gap:8px;
+    }
+    .cal-head{
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+      font-weight:600;
+      padding:8px 0;
+    }
+    .cal-day{
+      min-height:90px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:8px;
+      font-size:13px;
+    }
+    .cal-day.other-month{opacity:.45;}
+    .cal-day.today{border:2px solid var(--accent); background:#eff6ff;}
+    .cal-day .date{
+      display:block;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .event{
+      display:block;
+      margin-top:6px;
+      padding:4px 6px;
+      border-radius:6px;
+      background:#e0f2fe;
+      color:#075985;
+      font-size:12px;
+      line-height:1.25;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html">Classes</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html" class="active">Calendar</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Calendar</h1>
+      <button class="btn" type="button">Add Event</button>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <h3 style="margin-bottom:12px;">May 2026</h3>
+      <div class="calendar">
+        <div class="cal-head">Sun</div>
+        <div class="cal-head">Mon</div>
+        <div class="cal-head">Tue</div>
+        <div class="cal-head">Wed</div>
+        <div class="cal-head">Thu</div>
+        <div class="cal-head">Fri</div>
+        <div class="cal-head">Sat</div>
+
+        <div class="cal-day other-month"><span class="date">26</span></div>
+        <div class="cal-day other-month"><span class="date">27</span></div>
+        <div class="cal-day other-month"><span class="date">28</span></div>
+        <div class="cal-day other-month"><span class="date">29</span></div>
+        <div class="cal-day other-month"><span class="date">30</span></div>
+        <div class="cal-day"><span class="date">1</span></div>
+        <div class="cal-day"><span class="date">2</span></div>
+        <div class="cal-day"><span class="date">3</span></div>
+        <div class="cal-day today"><span class="date">4</span><span class="event">Attendance review</span></div>
+        <div class="cal-day"><span class="date">5</span></div>
+        <div class="cal-day"><span class="date">6</span><span class="event">Math quiz</span></div>
+        <div class="cal-day"><span class="date">7</span></div>
+        <div class="cal-day"><span class="date">8</span></div>
+        <div class="cal-day"><span class="date">9</span></div>
+        <div class="cal-day"><span class="date">10</span></div>
+        <div class="cal-day"><span class="date">11</span></div>
+        <div class="cal-day"><span class="date">12</span><span class="event">Staff meeting</span></div>
+        <div class="cal-day"><span class="date">13</span></div>
+        <div class="cal-day"><span class="date">14</span></div>
+        <div class="cal-day"><span class="date">15</span><span class="event">Fee deadline</span></div>
+        <div class="cal-day"><span class="date">16</span></div>
+        <div class="cal-day"><span class="date">17</span></div>
+        <div class="cal-day"><span class="date">18</span></div>
+        <div class="cal-day"><span class="date">19</span></div>
+        <div class="cal-day"><span class="date">20</span><span class="event">Parent conference</span></div>
+        <div class="cal-day"><span class="date">21</span></div>
+        <div class="cal-day"><span class="date">22</span></div>
+        <div class="cal-day"><span class="date">23</span></div>
+        <div class="cal-day"><span class="date">24</span></div>
+        <div class="cal-day"><span class="date">25</span></div>
+        <div class="cal-day"><span class="date">26</span></div>
+        <div class="cal-day"><span class="date">27</span></div>
+        <div class="cal-day"><span class="date">28</span></div>
+        <div class="cal-day"><span class="date">29</span></div>
+        <div class="cal-day"><span class="date">30</span></div>
+        <div class="cal-day"><span class="date">31</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>

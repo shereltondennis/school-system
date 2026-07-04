@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance</title>
+  <link rel="stylesheet" href="stylesheet/assets/styles.css">
+  <style>
+    .attendance-toggle{
+      display:inline-flex; gap:6px; border:1px solid var(--border); border-radius:999px; padding:4px; background:#f8fafc;
+    }
+    .attendance-toggle button{
+      border:0; padding:6px 12px; border-radius:999px; font-size:13px; cursor:pointer; background:transparent;
+    }
+    .attendance-toggle button.active{
+      background:var(--accent); color:#fff;
+    }
+    .attendance-toggle button.absent.active{background:#dc2626;}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="classes.html">Classes</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="attendance.html" class="active">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="fees.html">Fees</a>
+    <a href="calender.html">Calendar</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Take Attendance</h1>
+      <button class="btn" type="button">Save Attendance</button>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div>
+          <label>Date</label>
+          <input class="input" type="date" value="2026-05-04">
+        </div>
+        <div>
+          <label>Class</label>
+          <select class="input">
+            <option>Grade 7A</option>
+            <option>Grade 8B</option>
+            <option>Grade 9B</option>
+          </select>
+        </div>
+        <div>
+          <label>Subject / Period</label>
+          <select class="input">
+            <option>Mathematics - Period 1</option>
+            <option>English - Period 2</option>
+            <option>Full Day</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Grade 7A - 04 May 2026</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">#</th>
+            <th>Student Name</th>
+            <th style="width:160px;">Roll No</th>
+            <th style="width:220px; text-align:right;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Amara Johnson</td>
+            <td>S-1021</td>
+            <td style="text-align:right;">
+              <div class="attendance-toggle">
+                <button class="active" type="button">Present</button>
+                <button type="button">Absent</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>David Mensah</td>
+            <td>S-1022</td>
+            <td style="text-align:right;">
+              <div class="attendance-toggle">
+                <button type="button">Present</button>
+                <button class="absent active" type="button">Absent</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Sarah Kamara</td>
+            <td>S-1023</td>
+            <td style="text-align:right;">
+              <div class="attendance-toggle">
+                <button class="active" type="button">Present</button>
+                <button type="button">Absent</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Emmanuel Doe</td>
+            <td>S-1024</td>
+            <td style="text-align:right;">
+              <div class="attendance-toggle">
+                <button class="active" type="button">Present</button>
+                <button type="button">Absent</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; font-size:13px; color:var(--muted);">
+        * Toggle buttons will work once we add JS. For now it’s static UI.
+      </p>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+</body>
+</html>
