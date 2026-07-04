@@ -12,9 +12,37 @@ const toast = (message, type = "success") => {
 const moneyToNumber = (value) => Number(String(value).replace(/[^0-9.-]/g, "")) || 0;
 const formatMoney = (value) => `$${Number(value).toLocaleString()}`;
 
+const teacherLoginAccounts = [
+  { id: "T-201", name: "Ms. Evelyn Cole", email: "e.cole@school.edu", password: "teacher123" },
+  { id: "T-202", name: "Mr. Samuel Wright", email: "s.wright@school.edu", password: "teacher123" },
+  { id: "T-203", name: "Mrs. Hannah Brooks", email: "h.brooks@school.edu", password: "teacher123" },
+  { id: "T-204", name: "Mr. Daniel Price", email: "d.price@school.edu", password: "teacher123" },
+  { id: "T-205", name: "Ms. Olivia Grant", email: "o.grant@school.edu", password: "teacher123" },
+  { id: "T-206", name: "Mr. Marcus Reed", email: "m.reed@school.edu", password: "teacher123" },
+  { id: "T-207", name: "Mrs. Sophia Bennett", email: "s.bennett@school.edu", password: "teacher123" },
+  { id: "T-208", name: "Mr. Ethan Foster", email: "e.foster@school.edu", password: "teacher123" },
+  { id: "T-209", name: "Ms. Grace Turner", email: "g.turner@school.edu", password: "teacher123" },
+  { id: "T-210", name: "Mr. Isaac Morgan", email: "i.morgan@school.edu", password: "teacher123" },
+  { id: "T-211", name: "Mrs. Lydia Hayes", email: "l.hayes@school.edu", password: "teacher123" },
+  { id: "T-212", name: "Mr. Noah Carter", email: "n.carter@school.edu", password: "teacher123" },
+  { id: "T-213", name: "Ms. Chloe Evans", email: "c.evans@school.edu", password: "teacher123" },
+  { id: "T-214", name: "Mr. Aaron Phillips", email: "a.phillips@school.edu", password: "teacher123" },
+  { id: "T-215", name: "Mrs. Victoria James", email: "v.james@school.edu", password: "teacher123" },
+  { id: "T-216", name: "Mr. Caleb Scott", email: "c.scott@school.edu", password: "teacher123" },
+  { id: "T-217", name: "Ms. Natalie Ward", email: "n.ward@school.edu", password: "teacher123" },
+  { id: "T-218", name: "Mr. Adrian Bell", email: "a.bell@school.edu", password: "teacher123" },
+  { id: "T-219", name: "Mrs. Leah Cooper", email: "l.cooper@school.edu", password: "teacher123" },
+  { id: "T-220", name: "Mr. Owen Mitchell", email: "o.mitchell@school.edu", password: "teacher123" },
+  { id: "T-221", name: "Ms. Penelope Hughes", email: "p.hughes@school.edu", password: "teacher123" },
+  { id: "T-222", name: "Mr. Julian Rivera", email: "j.rivera@school.edu", password: "teacher123" },
+  { id: "T-223", name: "Mrs. Maya Peterson", email: "m.peterson@school.edu", password: "teacher123" },
+  { id: "T-224", name: "Mr. Connor Bailey", email: "c.bailey@school.edu", password: "teacher123" },
+  { id: "T-225", name: "Ms. Abigail Simmons", email: "a.simmons@school.edu", password: "teacher123" },
+];
+
 const credentials = {
   Admin: { email: "admin@bfs.edu", password: "admin123", page: "darshboard.html", name: "Admin User" },
-  Teacher: { email: "teacher@bfs.edu", password: "teacher123", page: "teacher-portal.html", name: "Ms. Evelyn Cole" },
+  Teacher: { email: "teacher@bfs.edu", password: "teacher123", page: "teacher-portal.html", name: "Ms. Evelyn Cole", id: "T-201" },
   Student: { email: "student@bfs.edu", password: "student123", page: "student-portal.html", name: "Amara Johnson" },
   Parent: { email: "parent@bfs.edu", password: "parent123", page: "parent-portal.html", name: "Mrs. Johnson" },
 };
@@ -318,6 +346,12 @@ const setupLogin = () => {
     const password = form.querySelector('input[type="password"]');
     const role = form.querySelector("#login-role")?.value || "Admin";
     const account = credentials[role];
+    const teacherAccount = role === "Teacher"
+      ? teacherLoginAccounts.find((teacher) => teacher.email === email.value.trim() && teacher.password === password.value.trim())
+      : null;
+    const activeAccount = teacherAccount
+      ? { ...teacherAccount, page: "teacher-portal.html" }
+      : account;
 
     if (!email.value.trim() || !password.value.trim()) {
       (email.value.trim() ? password : email).focus();
@@ -325,18 +359,19 @@ const setupLogin = () => {
       return;
     }
 
-    if (email.value.trim() !== account.email || password.value.trim() !== account.password) {
+    if (!teacherAccount && (email.value.trim() !== account.email || password.value.trim() !== account.password)) {
       toast(`Invalid ${role} login details.`, "error");
       return;
     }
 
     sessionStorage.setItem("currentUser", JSON.stringify({
       role,
-      email: account.email,
-      name: account.name,
-      home: account.page,
+      email: activeAccount.email,
+      name: activeAccount.name,
+      teacherId: activeAccount.id,
+      home: activeAccount.page,
     }));
-    window.location.href = account.page;
+    window.location.href = activeAccount.page;
   });
 };
 

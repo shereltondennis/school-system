@@ -50,6 +50,15 @@
     }
     .attendance-toggle button.active{background:var(--accent); color:#fff;}
     .attendance-toggle button.absent.active{background:#dc2626;}
+    .lesson-note{
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:12px;
+      background:#fafafa;
+      line-height:1.5;
+    }
+    .lesson-note h4{font-size:14px; margin-bottom:6px;}
+    .lesson-note p{color:var(--muted); font-size:14px;}
     @media(max-width:1100px){
       .teacher-profile{grid-template-columns:1fr 1fr;}
     }
@@ -62,17 +71,24 @@
 <div class="app">
   <aside class="sidebar">
     <h2>BrightFuture</h2>
-    <a href="darshboard.html">Dashboard</a>
-    <a href="teachers.html">Teachers</a>
+    <a href="darshboard.html" class="admin-only">Dashboard</a>
+    <a href="teachers.html" class="admin-only">Teachers</a>
     <a href="teacher-portal.html" class="active">Teacher Portal</a>
-    <div class="teacher-roster-title">Teacher List</div>
+    <a href="#subjects" class="teacher-only is-hidden">My Subjects</a>
+    <a href="#classes" class="teacher-only is-hidden">My Classes</a>
+    <a href="#students" class="teacher-only is-hidden">My Students</a>
+    <a href="#attendance" class="teacher-only is-hidden">Attendance Sheet</a>
+    <a href="#grades" class="teacher-only is-hidden">Grade Sheet</a>
+    <a href="#schedule" class="teacher-only is-hidden">Planning Schedule</a>
+    <a href="#lessonPlans" class="teacher-only is-hidden">Lesson Planning</a>
+    <div class="teacher-roster-title admin-only">Teacher List</div>
     <div id="teacherRoster"></div>
     <a href="index.html">Logout</a>
   </aside>
   <main class="main">
     <div class="topbar">
-      <h1>Teacher Portal</h1>
-      <button class="btn" type="button">Save Changes</button>
+      <h1 id="portalTitle">Teacher Portal</h1>
+      <button class="btn" type="button" id="saveTeaching">Save Teaching Updates</button>
     </div>
 
     <section class="teacher-profile">
@@ -93,6 +109,7 @@
       <div class="tab">Grades</div>
       <div class="tab">Attendance</div>
       <div class="tab">Schedule</div>
+      <div class="tab">Lesson Plans</div>
     </div>
 
     <div class="card" id="subjects">
@@ -124,7 +141,7 @@
 
     <div class="card" id="grades" style="margin-top:16px;">
       <div class="topbar" style="margin-bottom:12px;">
-        <h3>Grade Information</h3>
+        <h3>Grade Sheet</h3>
         <button class="btn" type="button">Export Report</button>
       </div>
       <table>
@@ -135,7 +152,7 @@
 
     <div class="card" id="attendance" style="margin-top:16px;">
       <div class="topbar" style="margin-bottom:12px;">
-        <h3>Attendance Information</h3>
+        <h3>Attendance Sheet</h3>
         <button class="btn" type="button">Save Attendance</button>
       </div>
       <table>
@@ -145,15 +162,29 @@
     </div>
 
     <div class="card" id="schedule" style="margin-top:16px;">
-      <h3 style="margin-bottom:12px;">Teaching Schedule</h3>
+      <h3 style="margin-bottom:12px;">Planning Schedule</h3>
       <table>
         <thead><tr><th>Day</th><th>Time</th><th>Class</th><th>Subject</th><th>Room</th></tr></thead>
         <tbody id="scheduleBody"></tbody>
       </table>
     </div>
+
+    <div class="card" id="lessonPlans" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Lesson Planning</h3>
+      <div class="grid cols-3" id="lessonPlansBody"></div>
+    </div>
   </main>
 </div>
 <script>
+  const currentUser = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("currentUser")) || null;
+    } catch {
+      return null;
+    }
+  })();
+  const isTeacherUser = currentUser?.role === "Teacher";
+
   const teachers = [
     {id:"T-201", name:"Ms. Evelyn Cole", email:"e.cole@school.edu", department:"Science", classTeacher:"Grade 9B", subjects:["Mathematics","Physics","Computer Studies"], classes:["Grade 7A","Grade 8B","Grade 9B"], students:128, attendance:"96%"},
     {id:"T-202", name:"Mr. Samuel Wright", email:"s.wright@school.edu", department:"Languages", classTeacher:"Grade 7A", subjects:["English","Literature"], classes:["Grade 7A","Grade 8A"], students:91, attendance:"94%"},
@@ -202,12 +233,21 @@
     subject: teacher.subjects[index % teacher.subjects.length],
     status: index === 1 ? "Needs Support" : "Active"
   }));
+  const teacherLessonPlans = (teacher) => teacher.subjects.map((subject, index) => ({
+    subject,
+    className: teacher.classes[index % teacher.classes.length],
+    objective: `Complete the next ${subject} topic and check student understanding.`,
+    activity: index % 2 === 0 ? "Guided practice, group work, and exit questions." : "Review, demonstration, and short class assessment.",
+    resources: index % 2 === 0 ? "Textbook, board notes, worksheet" : "Projector, lab notes, student notebooks"
+  }));
 
   const renderTeacher = (teacherId) => {
     const teacher = teachers.find((item) => item.id === teacherId) || teachers[0];
     const classRows = teacherClassRows(teacher);
     const studentRows = teacherStudentRows(teacher);
+    const lessonPlans = teacherLessonPlans(teacher);
 
+    document.getElementById("portalTitle").textContent = isTeacherUser ? `Welcome, ${teacher.name}` : "Teacher Portal";
     document.getElementById("teacherName").textContent = teacher.name;
     document.getElementById("teacherMeta").innerHTML = `${teacher.id} &bull; ${teacher.department}<br>${teacher.email}<br>Class Teacher: ${teacher.classTeacher}`;
     document.getElementById("subjectCount").textContent = teacher.subjects.length;
@@ -238,6 +278,9 @@
     document.getElementById("scheduleBody").innerHTML = makeRows(classRows, (item, index) =>
       `<tr><td>${days[index]}</td><td>${times[index]}</td><td>${item.className}</td><td>${item.subject}</td><td>${item.room}</td></tr>`
     );
+    document.getElementById("lessonPlansBody").innerHTML = makeRows(lessonPlans, (item) =>
+      `<div class="lesson-note"><h4>${item.subject} - ${item.className}</h4><p><strong>Objective:</strong> ${item.objective}</p><p><strong>Activities:</strong> ${item.activity}</p><p><strong>Resources:</strong> ${item.resources}</p></div>`
+    );
 
     document.querySelectorAll(".teacher-link").forEach((button) => {
       button.classList.toggle("active", button.dataset.teacherId === teacher.id);
@@ -245,14 +288,23 @@
   };
 
   const roster = document.getElementById("teacherRoster");
-  roster.innerHTML = teachers.map((teacher) =>
-    `<button class="teacher-link" type="button" data-teacher-id="${teacher.id}">${teacher.name}<span>${teacher.id} &bull; ${teacher.department}</span></button>`
-  ).join("");
-  roster.addEventListener("click", (event) => {
-    const button = event.target.closest(".teacher-link");
-    if (!button) return;
-    renderTeacher(button.dataset.teacherId);
-  });
+  const loggedInTeacher = teachers.find((teacher) => teacher.id === currentUser?.teacherId || teacher.email === currentUser?.email || teacher.name === currentUser?.name) || teachers[0];
+
+  if (isTeacherUser) {
+    document.querySelectorAll(".admin-only").forEach((item) => item.classList.add("is-hidden"));
+    document.querySelectorAll(".teacher-only").forEach((item) => item.classList.remove("is-hidden"));
+    roster.classList.add("is-hidden");
+  } else {
+    document.querySelectorAll(".teacher-only").forEach((item) => item.classList.add("is-hidden"));
+    roster.innerHTML = teachers.map((teacher) =>
+      `<button class="teacher-link" type="button" data-teacher-id="${teacher.id}">${teacher.name}<span>${teacher.id} &bull; ${teacher.department}</span></button>`
+    ).join("");
+    roster.addEventListener("click", (event) => {
+      const button = event.target.closest(".teacher-link");
+      if (!button) return;
+      renderTeacher(button.dataset.teacherId);
+    });
+  }
 
   document.getElementById("attendanceBody").addEventListener("click", (event) => {
     const button = event.target.closest(".attendance-toggle button");
@@ -270,7 +322,13 @@
     });
   });
 
-  renderTeacher(teachers[0].id);
+  document.getElementById("saveTeaching").addEventListener("click", () => {
+    if (typeof toast === "function") {
+      toast("Teaching updates saved.");
+    }
+  });
+
+  renderTeacher(isTeacherUser ? loggedInTeacher.id : teachers[0].id);
 </script>
 <script src="stylesheet/assets/sidebar.js"></script>
 <script src="stylesheet/assets/app.js"></script>

@@ -55,6 +55,13 @@
     }
     .detail-item h4{font-size:13px; color:var(--muted); font-weight:600; margin-bottom:6px;}
     .detail-item p{font-size:15px; line-height:1.5;}
+    .table-scroll{
+      width:100%;
+      overflow-x:auto;
+    }
+    .grade-table{
+      min-width:1180px;
+    }
     @media(max-width:1100px){
       .student-profile{grid-template-columns:1fr 1fr;}
     }
@@ -113,10 +120,25 @@
 
     <div class="card" id="grades" style="margin-top:16px;">
       <h3 style="margin-bottom:12px;">Grade Information</h3>
-      <table>
-        <thead><tr><th>Subject</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
-        <tbody id="gradesBody"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="grade-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>1st Pd /100</th>
+              <th>2nd Pd /100</th>
+              <th>3rd Pd /100</th>
+              <th>Exam /100</th>
+              <th>4th Pd /100</th>
+              <th>5th Pd /100</th>
+              <th>6th Pd /100</th>
+              <th>Exam /100</th>
+              <th>Final Grade</th>
+            </tr>
+          </thead>
+          <tbody id="gradesBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="card" id="attendance" style="margin-top:16px;">
@@ -215,13 +237,25 @@
   const detailItem = (label, value) => `<div class="detail-item"><h4>${label}</h4><p>${value}</p></div>`;
   const money = (value) => `$${Number(value).toLocaleString()}`;
 
+  const scoreToGrade = (score) => score >= 80 ? "A" : score >= 70 ? "B" : score >= 60 ? "C" : "D";
+  const clampScore = (score) => Math.min(100, Math.max(45, Math.round(score)));
   const studentGrades = (student) => subjects.map(([subject], index) => {
-    const testOne = Math.min(20, Math.max(10, Math.round(student.average / 5) - 1 + (index % 2)));
-    const testTwo = Math.min(20, Math.max(10, Math.round(student.average / 5) - (index % 3)));
-    const exam = Math.min(60, Math.max(30, student.average - testOne - testTwo + (index % 4)));
-    const total = testOne + testTwo + exam;
-    const grade = total >= 80 ? "A" : total >= 70 ? "B" : total >= 60 ? "C" : "D";
-    return {subject, testOne, testTwo, exam, total, grade};
+    const base = student.average + (index % 3) - 1;
+    const firstPeriods = [
+      clampScore(base + 3),
+      clampScore(base - 2),
+      clampScore(base + 1)
+    ];
+    const secondPeriods = [
+      clampScore(base + 2),
+      clampScore(base - 1),
+      clampScore(base + 4)
+    ];
+    const firstExam = clampScore(base - 3 + (index % 2));
+    const secondExam = clampScore(base + 1 - (index % 2));
+    const finalScore = Math.round((firstPeriods.reduce((sum, score) => sum + score, 0) + firstExam + secondPeriods.reduce((sum, score) => sum + score, 0) + secondExam) / 8);
+    const finalGrade = scoreToGrade(finalScore);
+    return {subject, firstPeriods, firstExam, secondPeriods, secondExam, finalScore, finalGrade};
   });
 
   const renderStudent = (studentId) => {
@@ -256,9 +290,10 @@
       `<tr><td>${subject}</td><td>${teacher}</td><td>${room}</td><td>${periods}</td></tr>`
     );
 
-    document.getElementById("gradesBody").innerHTML = makeRows(grades, (item) =>
-      `<tr><td>${item.subject}</td><td>${item.testOne}</td><td>${item.testTwo}</td><td>${item.exam}</td><td>${item.total}</td><td><span class="badge ${item.grade === "A" ? "ok" : ""}">${item.grade}</span></td></tr>`
-    );
+    document.getElementById("gradesBody").innerHTML = makeRows(grades, (item) => {
+      const gradeClass = item.finalGrade === "A" ? "ok" : item.finalGrade === "D" ? "warn" : "";
+      return `<tr><td>${item.subject}</td><td>${item.firstPeriods[0]}</td><td>${item.firstPeriods[1]}</td><td>${item.firstPeriods[2]}</td><td>${item.firstExam}</td><td>${item.secondPeriods[0]}</td><td>${item.secondPeriods[1]}</td><td>${item.secondPeriods[2]}</td><td>${item.secondExam}</td><td><span class="badge ${gradeClass}">${item.finalGrade} (${item.finalScore}%)</span></td></tr>`;
+    });
 
     document.getElementById("attendanceBody").innerHTML = makeRows(dates, (date, index) => {
       const [subject, teacher] = subjects[index % subjects.length];
