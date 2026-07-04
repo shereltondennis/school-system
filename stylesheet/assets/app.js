@@ -1,0 +1,273 @@
+const toast = (message, type = "success") => {
+  const oldToast = document.querySelector(".toast");
+  if (oldToast) oldToast.remove();
+
+  const item = document.createElement("div");
+  item.className = `toast ${type}`;
+  item.textContent = message;
+  document.body.appendChild(item);
+  setTimeout(() => item.remove(), 2400);
+};
+
+const moneyToNumber = (value) => Number(String(value).replace(/[^0-9.-]/g, "")) || 0;
+const formatMoney = (value) => `$${Number(value).toLocaleString()}`;
+
+const setupSearch = () => {
+  document.querySelectorAll('input[placeholder*="Search"]').forEach((input) => {
+    const table = input.closest(".card")?.nextElementSibling?.matches("table")
+      ? input.closest(".card").nextElementSibling
+      : document.querySelector("table");
+
+    if (!table) return;
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      table.querySelectorAll("tbody tr").forEach((row) => {
+        row.classList.toggle("is-hidden", !row.textContent.toLowerCase().includes(query));
+      });
+    });
+  });
+};
+
+const tableCell = (value) => {
+  const cell = document.createElement("td");
+  cell.innerHTML = value;
+  return cell;
+};
+
+const addRowFromForm = (form) => {
+  const pageTitle = document.querySelector(".topbar h1")?.textContent.trim() || document.title;
+  const values = Array.from(form.querySelectorAll("input, select, textarea"))
+    .filter((field) => field.type !== "file")
+    .map((field) => field.value.trim() || field.placeholder || "Pending");
+
+  const table = form.closest(".card")?.previousElementSibling?.matches("table")
+    ? form.closest(".card").previousElementSibling
+    : document.querySelector("table");
+
+  if (!table || values.length === 0) {
+    toast("Nothing to save yet.", "error");
+    return;
+  }
+
+  const row = document.createElement("tr");
+  const rows = table.querySelectorAll("tbody tr").length + 1;
+
+  if (pageTitle === "Students") {
+    row.append(
+      tableCell(`S-${1020 + rows}`),
+      tableCell(values[0]),
+      tableCell(values[1]),
+      tableCell(values[2]),
+      tableCell('<span class="badge ok">Active</span>')
+    );
+  } else if (pageTitle === "Teachers") {
+    row.append(
+      tableCell(`T-${200 + rows}`),
+      tableCell(values[0]),
+      tableCell(values[2]),
+      tableCell(values[3]),
+      tableCell(values[1]),
+      tableCell('<span class="badge ok">Active</span>')
+    );
+  } else if (pageTitle === "Classes") {
+    row.append(tableCell(values[0]), tableCell(values[1]), tableCell(values[2]), tableCell("0"), tableCell(values[3]));
+  } else if (pageTitle === "Subjects") {
+    row.append(tableCell(values[0]), tableCell(values[1]), tableCell(values[2]), tableCell(values[3]));
+  } else {
+    values.forEach((value) => row.append(tableCell(value)));
+  }
+
+  table.querySelector("tbody").appendChild(row);
+  form.reset();
+  toast(`${pageTitle.replace(" Management", "")} saved.`);
+};
+
+const setupForms = () => {
+  document.querySelectorAll("form").forEach((form) => {
+    form.addEventListener("submit", (event) => event.preventDefault());
+  });
+
+  document.querySelectorAll("button").forEach((button) => {
+    const label = button.textContent.trim();
+    if (!label.startsWith("Save ") || label === "Save Attendance" || label === "Save Changes") return;
+
+    button.addEventListener("click", () => {
+      const requiredFields = Array.from(button.closest("form")?.querySelectorAll("input, select, textarea") || [])
+        .filter((field) => field.type !== "file" && !field.value.trim());
+      if (requiredFields.length) {
+        requiredFields[0].focus();
+        toast("Fill in the empty fields first.", "error");
+        return;
+      }
+      addRowFromForm(button.closest("form"));
+    });
+  });
+};
+
+const setupAttendance = () => {
+  document.querySelectorAll(".attendance-toggle").forEach((group) => {
+    group.querySelectorAll("button").forEach((button) => {
+      button.addEventListener("click", () => {
+        group.querySelectorAll("button").forEach((item) => item.classList.remove("active", "absent"));
+        button.classList.add("active");
+        if (button.textContent.trim() === "Absent") button.classList.add("absent");
+      });
+    });
+  });
+
+  const saveAttendance = Array.from(document.querySelectorAll("button")).find((button) => button.textContent.trim() === "Save Attendance");
+  if (saveAttendance) {
+    saveAttendance.addEventListener("click", () => {
+      const present = document.querySelectorAll(".attendance-toggle button.active:not(.absent)").length;
+      const absent = document.querySelectorAll(".attendance-toggle button.absent.active").length;
+      toast(`Attendance saved: ${present} present, ${absent} absent.`);
+    });
+  }
+};
+
+const setupSettingsTabs = () => {
+  const tabs = document.querySelectorAll(".tabs .tab");
+  if (!tabs.length) return;
+
+  const cards = Array.from(document.querySelectorAll(".tabs ~ .card"));
+  cards.forEach((card, index) => card.classList.toggle("is-hidden", index !== 0));
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((item) => item.classList.remove("active"));
+      cards.forEach((card) => card.classList.add("is-hidden"));
+      tab.classList.add("active");
+      cards[index]?.classList.remove("is-hidden");
+    });
+  });
+
+  const save = Array.from(document.querySelectorAll("button")).find((button) => button.textContent.trim() === "Save Changes");
+  save?.addEventListener("click", () => toast("Settings saved."));
+};
+
+const setupTableActions = () => {
+  document.querySelectorAll("button").forEach((button) => {
+    const label = button.textContent.trim();
+
+    if (label === "Edit" || label === "Edit Fee Structure") {
+      button.addEventListener("click", () => {
+        const scope = label === "Edit" ? button.closest("tr") : button.closest(".card");
+        const isEditing = button.textContent.trim() === "Done";
+
+        scope.querySelectorAll("td").forEach((cell) => {
+          cell.contentEditable = String(!isEditing);
+          cell.classList.toggle("editable-cell", !isEditing);
+        });
+        button.textContent = isEditing ? label : "Done";
+        toast(isEditing ? "Changes saved." : "Edit the highlighted fields, then click Done.");
+      });
+    }
+
+    if (label === "+ Add User") {
+      button.addEventListener("click", () => {
+        const name = prompt("User name:");
+        const email = prompt("User email:");
+        const role = prompt("User role:", "Teacher");
+        if (!name || !email || !role) return;
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${name}</td><td>${email}</td><td>${role}</td><td><span class="badge ok">Active</span></td><td><button class="btn ghost" type="button">Edit</button></td>`;
+        button.closest(".card").querySelector("tbody").appendChild(row);
+        toast("User added.");
+      });
+    }
+  });
+};
+
+const setupFees = () => {
+  const paymentButton = Array.from(document.querySelectorAll("button")).find((button) => button.textContent.trim() === "Record Payment");
+  if (!paymentButton) return;
+
+  paymentButton.addEventListener("click", () => {
+    const rows = Array.from(document.querySelectorAll("tbody tr"));
+    const name = prompt("Student name:");
+    const amount = moneyToNumber(prompt("Payment amount:"));
+    const row = rows.find((item) => item.children[0]?.textContent.toLowerCase().includes((name || "").toLowerCase()));
+    if (!row || !amount) {
+      toast("Payment was not recorded.", "error");
+      return;
+    }
+
+    const termFee = moneyToNumber(row.children[2].textContent);
+    const paid = moneyToNumber(row.children[3].textContent) + amount;
+    const balance = Math.max(termFee - paid, 0);
+    row.children[3].textContent = formatMoney(paid);
+    row.children[4].textContent = formatMoney(balance);
+    row.children[5].innerHTML = balance === 0 ? '<span class="badge ok">Paid</span>' : '<span class="badge warn">Partial</span>';
+    toast("Payment recorded.");
+  });
+};
+
+const setupGrades = () => {
+  const exportButton = Array.from(document.querySelectorAll("button")).find((button) => button.textContent.trim() === "Export Report");
+  if (!exportButton) return;
+
+  exportButton.addEventListener("click", () => {
+    const rows = Array.from(document.querySelectorAll("table tr")).map((row) =>
+      Array.from(row.children).map((cell) => `"${cell.textContent.trim()}"`).join(",")
+    );
+    const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "grades-report.csv";
+    link.click();
+    URL.revokeObjectURL(link.href);
+    toast("Grades report exported.");
+  });
+};
+
+const setupCalendar = () => {
+  const addEvent = Array.from(document.querySelectorAll("button")).find((button) => button.textContent.trim() === "Add Event");
+  if (!addEvent) return;
+
+  addEvent.addEventListener("click", () => {
+    const day = prompt("Day number:");
+    const title = prompt("Event title:");
+    const target = Array.from(document.querySelectorAll(".cal-day")).find((cell) => cell.querySelector(".date")?.textContent === day);
+    if (!target || !title) {
+      toast("Event was not added.", "error");
+      return;
+    }
+    const event = document.createElement("span");
+    event.className = "event";
+    event.textContent = title;
+    target.appendChild(event);
+    toast("Event added.");
+  });
+};
+
+const setupLogin = () => {
+  const login = document.querySelector('a[href="darshboard.html"]');
+  const form = login?.closest("form");
+  if (!login || !form) return;
+
+  login.addEventListener("click", (event) => {
+    event.preventDefault();
+    const email = form.querySelector('input[type="email"]');
+    const password = form.querySelector('input[type="password"]');
+    const role = form.querySelector("#login-role")?.value || "Admin";
+
+    if (!email.value.trim() || !password.value.trim()) {
+      (email.value.trim() ? password : email).focus();
+      toast("Enter email and password to login.", "error");
+      return;
+    }
+
+    window.location.href = role === "Teacher" ? "teacher-portal.html" : "darshboard.html";
+  });
+};
+
+setupSearch();
+setupForms();
+setupAttendance();
+setupSettingsTabs();
+setupTableActions();
+setupFees();
+setupGrades();
+setupCalendar();
+setupLogin();

@@ -5,12 +5,25 @@ if (sidebar) {
   toggle.className = "sidebar-toggle";
   toggle.type = "button";
   toggle.setAttribute("aria-label", "Toggle sidebar");
-  toggle.setAttribute("aria-expanded", "true");
   toggle.innerHTML = "<span></span><span></span><span></span>";
   document.body.appendChild(toggle);
 
+  const setSidebarOpen = (isOpen) => {
+    document.body.classList.toggle("sidebar-hidden", !isOpen);
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Close sidebar" : "Open sidebar");
+    localStorage.setItem("sidebarOpen", String(isOpen));
+  };
+
+  setSidebarOpen(localStorage.getItem("sidebarOpen") === "true");
+
   toggle.addEventListener("click", () => {
-    const isHidden = document.body.classList.toggle("sidebar-hidden");
-    toggle.setAttribute("aria-expanded", String(!isHidden));
+    setSidebarOpen(document.body.classList.contains("sidebar-hidden"));
+  });
+
+  sidebar.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      setSidebarOpen(false);
+    });
   });
 }

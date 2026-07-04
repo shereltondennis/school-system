@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teacher Portal</title>
+  <link rel="stylesheet" href="stylesheet/assets/styles.css">
+  <style>
+    .tabs{display:flex; gap:8px; border-bottom:1px solid var(--border); margin-bottom:16px; flex-wrap:wrap;}
+    .tab{padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; color:var(--muted);}
+    .tab.active{background:#fff; border:1px solid var(--border); border-bottom:1px solid #fff; color:var(--text); font-weight:600;}
+    .attendance-toggle{
+      display:inline-flex; gap:6px; border:1px solid var(--border); border-radius:999px; padding:4px; background:#f8fafc;
+    }
+    .attendance-toggle button{
+      border:0; padding:6px 12px; border-radius:999px; font-size:13px; cursor:pointer; background:transparent;
+    }
+    .attendance-toggle button.active{background:var(--accent); color:#fff;}
+    .attendance-toggle button.absent.active{background:#dc2626;}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>BrightFuture</h2>
+    <a href="teacher-portal.html" class="active">Teacher Portal</a>
+    <a href="subjects.html">Subjects</a>
+    <a href="classes.html">Classes</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="grades.html">Grades</a>
+    <a href="index.html">Logout</a>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Teacher Portal</h1>
+      <button class="btn" type="button">Save Changes</button>
+    </div>
+
+    <div class="grid cols-4" style="margin-bottom:16px;">
+      <div class="card stat"><h3>My Subjects</h3><p>3</p></div>
+      <div class="card stat"><h3>My Classes</h3><p>4</p></div>
+      <div class="card stat"><h3>Students</h3><p>128</p></div>
+      <div class="card stat"><h3>Attendance Today</h3><p>96%</p></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active">Subjects</div>
+      <div class="tab">Classes</div>
+      <div class="tab">Grades</div>
+      <div class="tab">Attendance</div>
+      <div class="tab">Schedule</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Assigned Subjects</h3>
+      <table>
+        <thead><tr><th>Code</th><th>Subject</th><th>Classes</th><th>Weekly Periods</th></tr></thead>
+        <tbody>
+          <tr><td>MATH101</td><td>Mathematics</td><td>7A, 8B, 9B</td><td>12</td></tr>
+          <tr><td>PHY101</td><td>Physics</td><td>9A, 9B</td><td>6</td></tr>
+          <tr><td>ICT101</td><td>Computer Studies</td><td>8B</td><td>3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Assigned Classes</h3>
+      <table>
+        <thead><tr><th>Class</th><th>Subject</th><th>Room</th><th>Students</th><th>Next Lesson</th></tr></thead>
+        <tbody>
+          <tr><td>Grade 7A</td><td>Mathematics</td><td>Block A-12</td><td>34</td><td>Mon 8:00 AM</td></tr>
+          <tr><td>Grade 8B</td><td>Computer Studies</td><td>Lab 2</td><td>29</td><td>Tue 10:00 AM</td></tr>
+          <tr><td>Grade 9B</td><td>Physics</td><td>Block B-04</td><td>31</td><td>Wed 9:00 AM</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="topbar" style="margin-bottom:12px;">
+        <h3>Grade Entry</h3>
+        <button class="btn" type="button">Export Report</button>
+      </div>
+      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px; max-width:none; margin-bottom:12px;">
+        <div><label>Class</label><select class="input"><option>Grade 9B</option><option>Grade 8B</option><option>Grade 7A</option></select></div>
+        <div><label>Subject</label><select class="input"><option>Mathematics</option><option>Physics</option><option>Computer Studies</option></select></div>
+        <div><label>Term</label><select class="input"><option>Term 2 - 2026</option><option>Term 1 - 2026</option></select></div>
+      </form>
+      <table>
+        <thead><tr><th>Roll No</th><th>Student</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>S-1021</td><td>Amara Johnson</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
+          <tr><td>S-1022</td><td>David Mensah</td><td>14</td><td>12</td><td>40</td><td>66</td><td><span class="badge">C</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="topbar" style="margin-bottom:12px;">
+        <h3>Take Attendance</h3>
+        <button class="btn" type="button">Save Attendance</button>
+      </div>
+      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px; max-width:none; margin-bottom:12px;">
+        <div><label>Date</label><input class="input" type="date" value="2026-05-04"></div>
+        <div><label>Class</label><select class="input"><option>Grade 7A</option><option>Grade 8B</option><option>Grade 9B</option></select></div>
+        <div><label>Subject / Period</label><select class="input"><option>Mathematics - Period 1</option><option>Physics - Period 2</option><option>Computer Studies - Period 4</option></select></div>
+      </form>
+      <table>
+        <thead><tr><th>#</th><th>Student</th><th>Roll No</th><th style="text-align:right;">Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Amara Johnson</td><td>S-1021</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>
+          <tr><td>2</td><td>David Mensah</td><td>S-1022</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>
+          <tr><td>3</td><td>Sarah Kamara</td><td>S-1023</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Teaching Schedule</h3>
+      <table>
+        <thead><tr><th>Day</th><th>Time</th><th>Class</th><th>Subject</th><th>Room</th></tr></thead>
+        <tbody>
+          <tr><td>Monday</td><td>8:00 AM</td><td>Grade 7A</td><td>Mathematics</td><td>Block A-12</td></tr>
+          <tr><td>Tuesday</td><td>10:00 AM</td><td>Grade 8B</td><td>Computer Studies</td><td>Lab 2</td></tr>
+          <tr><td>Wednesday</td><td>9:00 AM</td><td>Grade 9B</td><td>Physics</td><td>Block B-04</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script src="stylesheet/assets/sidebar.js"></script>
+<script src="stylesheet/assets/app.js"></script>
+</body>
+</html>
