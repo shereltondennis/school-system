@@ -5,65 +5,294 @@
   <title>Student Portal</title>
   <link rel="stylesheet" href="stylesheet/assets/styles.css">
   <style>
+    .student-roster-title{
+      margin:18px 12px 8px;
+      color:#93c5fd;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .student-link{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:2px;
+      border:0;
+      border-radius:8px;
+      margin-bottom:4px;
+      padding:9px 12px;
+      background:transparent;
+      color:#cbd5e1;
+      cursor:pointer;
+      text-align:left;
+    }
+    .student-link:hover, .student-link.active{background:var(--sidebar-hover); color:#fff;}
+    .student-link span{font-size:12px; color:#94a3b8;}
+    .student-link.active span{color:#bfdbfe;}
+    .student-profile{
+      display:grid;
+      grid-template-columns:1.2fr repeat(4, 1fr);
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .student-summary h2{font-size:20px; margin-bottom:6px;}
+    .student-summary p{color:var(--muted); line-height:1.6; font-size:14px;}
     .tabs{display:flex; gap:8px; border-bottom:1px solid var(--border); margin-bottom:16px; flex-wrap:wrap;}
     .tab{padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; color:var(--muted);}
     .tab.active{background:#fff; border:1px solid var(--border); border-bottom:1px solid #fff; color:var(--text); font-weight:600;}
+    .detail-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+    .detail-item{
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:12px;
+      background:#fafafa;
+    }
+    .detail-item h4{font-size:13px; color:var(--muted); font-weight:600; margin-bottom:6px;}
+    .detail-item p{font-size:15px; line-height:1.5;}
+    @media(max-width:1100px){
+      .student-profile{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:700px){
+      .student-profile, .detail-grid{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="student.html">Students</a>
     <a href="student-portal.html" class="active">Student Portal</a>
-    <a href="#subjects">My Subjects</a>
-    <a href="#grades">My Grades</a>
-    <a href="#attendance">My Attendance</a>
-    <a href="#fees">My Fees</a>
+    <div class="student-roster-title">Student List</div>
+    <div id="studentRoster"></div>
     <a href="index.html">Logout</a>
   </aside>
   <main class="main">
     <div class="topbar"><h1>Student Portal</h1></div>
-    <div class="grid cols-4" style="margin-bottom:16px;">
-      <div class="card stat"><h3>Class</h3><p>7A</p></div>
-      <div class="card stat"><h3>Subjects</h3><p>6</p></div>
-      <div class="card stat"><h3>Average</h3><p>84%</p></div>
-      <div class="card stat"><h3>Attendance</h3><p>96%</p></div>
-    </div>
+
+    <section class="student-profile">
+      <div class="card student-summary">
+        <h2 id="studentName">Student Name</h2>
+        <p id="studentMeta">Student information</p>
+      </div>
+      <div class="card stat"><h3>Class</h3><p id="classStat">-</p></div>
+      <div class="card stat"><h3>Subjects</h3><p id="subjectStat">0</p></div>
+      <div class="card stat"><h3>Average</h3><p id="averageStat">0%</p></div>
+      <div class="card stat"><h3>Attendance</h3><p id="attendanceStat">0%</p></div>
+    </section>
+
     <div class="tabs">
-      <div class="tab active">Subjects</div>
+      <div class="tab active">Profile</div>
+      <div class="tab">Class</div>
       <div class="tab">Grades</div>
       <div class="tab">Attendance</div>
+      <div class="tab">Parent</div>
       <div class="tab">Fees</div>
     </div>
-    <div class="card" id="subjects">
-      <h3 style="margin-bottom:12px;">My Subjects</h3>
-      <table><thead><tr><th>Subject</th><th>Teacher</th><th>Class</th></tr></thead><tbody>
-        <tr><td>Mathematics</td><td>Ms. Evelyn Cole</td><td>Grade 7A</td></tr>
-        <tr><td>English Language</td><td>Mr. Samuel Wright</td><td>Grade 7A</td></tr>
-      </tbody></table>
+
+    <div class="card" id="profile">
+      <h3 style="margin-bottom:12px;">Profile Information</h3>
+      <div class="detail-grid" id="profileDetails"></div>
     </div>
+
+    <div class="card" id="classInfo" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Class Information</h3>
+      <div class="detail-grid" id="classDetails" style="margin-bottom:12px;"></div>
+      <table>
+        <thead><tr><th>Subject</th><th>Teacher</th><th>Room</th><th>Weekly Periods</th></tr></thead>
+        <tbody id="subjectsBody"></tbody>
+      </table>
+    </div>
+
     <div class="card" id="grades" style="margin-top:16px;">
-      <h3 style="margin-bottom:12px;">My Grades</h3>
-      <table><thead><tr><th>Subject</th><th>Test 1</th><th>Test 2</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>
-        <tr><td>Mathematics</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td></tr>
-        <tr><td>English Language</td><td>16</td><td>15</td><td>48</td><td>79</td><td><span class="badge">B</span></td></tr>
-      </tbody></table>
+      <h3 style="margin-bottom:12px;">Grade Information</h3>
+      <table>
+        <thead><tr><th>Subject</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
+        <tbody id="gradesBody"></tbody>
+      </table>
     </div>
+
     <div class="card" id="attendance" style="margin-top:16px;">
-      <h3 style="margin-bottom:12px;">My Attendance</h3>
-      <table><thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead><tbody>
-        <tr><td>2026-05-04</td><td>Mathematics</td><td><span class="badge ok">Present</span></td></tr>
-        <tr><td>2026-05-05</td><td>English Language</td><td><span class="badge ok">Present</span></td></tr>
-      </tbody></table>
+      <h3 style="margin-bottom:12px;">Attendance Information</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Subject</th><th>Teacher</th><th>Status</th></tr></thead>
+        <tbody id="attendanceBody"></tbody>
+      </table>
     </div>
+
+    <div class="card" id="parent" style="margin-top:16px;">
+      <h3 style="margin-bottom:12px;">Parent Information</h3>
+      <div class="detail-grid" id="parentDetails"></div>
+    </div>
+
     <div class="card" id="fees" style="margin-top:16px;">
-      <h3 style="margin-bottom:12px;">My Fees</h3>
-      <table><thead><tr><th>Term Fee</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody>
-        <tr><td>$350</td><td>$350</td><td>$0</td><td><span class="badge ok">Paid</span></td></tr>
-      </tbody></table>
+      <h3 style="margin-bottom:12px;">Fee Information</h3>
+      <table>
+        <thead><tr><th>Term Fee</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+        <tbody id="feesBody"></tbody>
+      </table>
     </div>
   </main>
 </div>
+<script>
+  const students = [
+    {id:"S-1021", name:"Amara Johnson", gender:"Female", dob:"2013-04-12", address:"14 Palm Avenue", className:"Grade 7A", stream:"Blue", parent:"Mrs. Naomi Johnson", relation:"Mother", parentPhone:"+1 555-0101", parentEmail:"naomi.johnson@email.com", status:"Active", attendance:96, average:84, feePaid:350},
+    {id:"S-1022", name:"David Mensah", gender:"Male", dob:"2011-08-19", address:"22 Cedar Street", className:"Grade 9B", stream:"Gold", parent:"Mr. Kwame Mensah", relation:"Father", parentPhone:"+1 555-0102", parentEmail:"kwame.mensah@email.com", status:"Fees Due", attendance:91, average:76, feePaid:210},
+    {id:"S-1023", name:"Sarah Kamara", gender:"Female", dob:"2012-01-30", address:"7 Market Road", className:"Grade 8B", stream:"Blue", parent:"Mrs. Mariama Kamara", relation:"Mother", parentPhone:"+1 555-0103", parentEmail:"mariama.kamara@email.com", status:"Active", attendance:97, average:88, feePaid:350},
+    {id:"S-1024", name:"Leo Martin", gender:"Male", dob:"2013-11-05", address:"31 Lake View", className:"Grade 7A", stream:"Green", parent:"Mr. Paul Martin", relation:"Father", parentPhone:"+1 555-0104", parentEmail:"paul.martin@email.com", status:"Active", attendance:94, average:81, feePaid:350},
+    {id:"S-1025", name:"Aisha Conteh", gender:"Female", dob:"2012-06-23", address:"9 Hill Lane", className:"Grade 8A", stream:"Gold", parent:"Mrs. Fatima Conteh", relation:"Mother", parentPhone:"+1 555-0105", parentEmail:"fatima.conteh@email.com", status:"Active", attendance:98, average:91, feePaid:350},
+    {id:"S-1026", name:"Noah Allen", gender:"Male", dob:"2011-02-14", address:"18 River Close", className:"Grade 9A", stream:"Blue", parent:"Mrs. Linda Allen", relation:"Mother", parentPhone:"+1 555-0106", parentEmail:"linda.allen@email.com", status:"Active", attendance:92, average:73, feePaid:280},
+    {id:"S-1027", name:"Maya Peterson", gender:"Female", dob:"2014-09-09", address:"45 King Street", className:"Grade 6A", stream:"Green", parent:"Mr. Daniel Peterson", relation:"Father", parentPhone:"+1 555-0107", parentEmail:"daniel.peterson@email.com", status:"Active", attendance:95, average:86, feePaid:350},
+    {id:"S-1028", name:"Ethan Foster", gender:"Male", dob:"2013-03-27", address:"11 Unity Road", className:"Grade 7B", stream:"Gold", parent:"Mrs. Helen Foster", relation:"Mother", parentPhone:"+1 555-0108", parentEmail:"helen.foster@email.com", status:"Active", attendance:93, average:79, feePaid:350},
+    {id:"S-1029", name:"Chloe Evans", gender:"Female", dob:"2012-12-01", address:"6 Maple Drive", className:"Grade 8C", stream:"Blue", parent:"Mr. Owen Evans", relation:"Father", parentPhone:"+1 555-0109", parentEmail:"owen.evans@email.com", status:"Active", attendance:96, average:83, feePaid:350},
+    {id:"S-1030", name:"Isaac Morgan", gender:"Male", dob:"2010-10-18", address:"29 Bridge Road", className:"Grade 10A", stream:"Green", parent:"Mrs. Ruth Morgan", relation:"Mother", parentPhone:"+1 555-0110", parentEmail:"ruth.morgan@email.com", status:"Active", attendance:90, average:74, feePaid:300},
+    {id:"S-1031", name:"Grace Turner", gender:"Female", dob:"2014-05-21", address:"17 School Lane", className:"Grade 6B", stream:"Gold", parent:"Mr. Andrew Turner", relation:"Father", parentPhone:"+1 555-0111", parentEmail:"andrew.turner@email.com", status:"Active", attendance:99, average:92, feePaid:350},
+    {id:"S-1032", name:"Caleb Scott", gender:"Male", dob:"2011-07-16", address:"8 West End", className:"Grade 9C", stream:"Blue", parent:"Mrs. Patricia Scott", relation:"Mother", parentPhone:"+1 555-0112", parentEmail:"patricia.scott@email.com", status:"Active", attendance:94, average:80, feePaid:350},
+    {id:"S-1033", name:"Natalie Ward", gender:"Female", dob:"2013-01-11", address:"21 Garden Street", className:"Grade 7D", stream:"Green", parent:"Mr. Simon Ward", relation:"Father", parentPhone:"+1 555-0113", parentEmail:"simon.ward@email.com", status:"Active", attendance:97, average:89, feePaid:350},
+    {id:"S-1034", name:"Aaron Phillips", gender:"Male", dob:"2014-02-28", address:"12 Mission Road", className:"Grade 6C", stream:"Gold", parent:"Mrs. Clara Phillips", relation:"Mother", parentPhone:"+1 555-0114", parentEmail:"clara.phillips@email.com", status:"Fees Due", attendance:89, average:68, feePaid:180},
+    {id:"S-1035", name:"Victoria James", gender:"Female", dob:"2011-09-13", address:"3 Orchard Close", className:"Grade 9C", stream:"Blue", parent:"Mr. George James", relation:"Father", parentPhone:"+1 555-0115", parentEmail:"george.james@email.com", status:"Active", attendance:95, average:85, feePaid:350},
+    {id:"S-1036", name:"Adrian Bell", gender:"Male", dob:"2014-06-06", address:"24 Chapel Lane", className:"Grade 5C", stream:"Green", parent:"Mrs. Erica Bell", relation:"Mother", parentPhone:"+1 555-0116", parentEmail:"erica.bell@email.com", status:"Active", attendance:96, average:82, feePaid:350},
+    {id:"S-1037", name:"Leah Cooper", gender:"Female", dob:"2012-03-08", address:"13 College Road", className:"Grade 8D", stream:"Gold", parent:"Mr. Henry Cooper", relation:"Father", parentPhone:"+1 555-0117", parentEmail:"henry.cooper@email.com", status:"Active", attendance:92, average:78, feePaid:310},
+    {id:"S-1038", name:"Owen Mitchell", gender:"Male", dob:"2011-05-25", address:"5 North Road", className:"Grade 9D", stream:"Blue", parent:"Mrs. Laura Mitchell", relation:"Mother", parentPhone:"+1 555-0118", parentEmail:"laura.mitchell@email.com", status:"Active", attendance:93, average:77, feePaid:350},
+    {id:"S-1039", name:"Penelope Hughes", gender:"Female", dob:"2015-08-03", address:"19 Pine Street", className:"Grade 4A", stream:"Green", parent:"Mr. Mark Hughes", relation:"Father", parentPhone:"+1 555-0119", parentEmail:"mark.hughes@email.com", status:"Active", attendance:98, average:90, feePaid:350},
+    {id:"S-1040", name:"Julian Rivera", gender:"Male", dob:"2012-04-17", address:"2 Sunset Road", className:"Grade 8E", stream:"Gold", parent:"Mrs. Elena Rivera", relation:"Mother", parentPhone:"+1 555-0120", parentEmail:"elena.rivera@email.com", status:"Active", attendance:91, average:75, feePaid:290},
+    {id:"S-1041", name:"Abigail Simmons", gender:"Female", dob:"2014-12-22", address:"26 Station Road", className:"Grade 5D", stream:"Blue", parent:"Mr. Peter Simmons", relation:"Father", parentPhone:"+1 555-0121", parentEmail:"peter.simmons@email.com", status:"Active", attendance:97, average:87, feePaid:350},
+    {id:"S-1042", name:"Connor Bailey", gender:"Male", dob:"2014-01-07", address:"30 Queens Road", className:"Grade 6D", stream:"Green", parent:"Mrs. Angela Bailey", relation:"Mother", parentPhone:"+1 555-0122", parentEmail:"angela.bailey@email.com", status:"Active", attendance:95, average:81, feePaid:350},
+    {id:"S-1043", name:"Sophia Bennett", gender:"Female", dob:"2015-11-20", address:"15 Valley Road", className:"Grade 5A", stream:"Gold", parent:"Mr. Martin Bennett", relation:"Father", parentPhone:"+1 555-0123", parentEmail:"martin.bennett@email.com", status:"Active", attendance:99, average:93, feePaid:350},
+    {id:"S-1044", name:"Marcus Reed", gender:"Male", dob:"2012-02-02", address:"10 Oak Avenue", className:"Grade 8B", stream:"Blue", parent:"Mrs. Joan Reed", relation:"Mother", parentPhone:"+1 555-0124", parentEmail:"joan.reed@email.com", status:"Active", attendance:96, average:84, feePaid:350},
+    {id:"S-1045", name:"Olivia Grant", gender:"Female", dob:"2014-07-15", address:"28 Church Road", className:"Grade 6B", stream:"Green", parent:"Mr. Brian Grant", relation:"Father", parentPhone:"+1 555-0125", parentEmail:"brian.grant@email.com", status:"Active", attendance:94, average:80, feePaid:330},
+    {id:"S-1046", name:"Daniel Price", gender:"Male", dob:"2010-09-26", address:"4 Central Avenue", className:"Grade 10C", stream:"Gold", parent:"Mrs. Irene Price", relation:"Mother", parentPhone:"+1 555-0126", parentEmail:"irene.price@email.com", status:"Active", attendance:92, average:78, feePaid:350},
+    {id:"S-1047", name:"Hannah Brooks", gender:"Female", dob:"2012-10-10", address:"33 Park Lane", className:"Grade 8A", stream:"Blue", parent:"Mr. Victor Brooks", relation:"Father", parentPhone:"+1 555-0127", parentEmail:"victor.brooks@email.com", status:"Active", attendance:97, average:86, feePaid:350},
+    {id:"S-1048", name:"Samuel Wright", gender:"Male", dob:"2013-06-29", address:"16 East Road", className:"Grade 7C", stream:"Green", parent:"Mrs. Mercy Wright", relation:"Mother", parentPhone:"+1 555-0128", parentEmail:"mercy.wright@email.com", status:"Fees Due", attendance:88, average:70, feePaid:160},
+    {id:"S-1049", name:"Evelyn Cole", gender:"Female", dob:"2011-12-14", address:"20 Library Street", className:"Grade 9A", stream:"Gold", parent:"Mr. Joseph Cole", relation:"Father", parentPhone:"+1 555-0129", parentEmail:"joseph.cole@email.com", status:"Active", attendance:95, average:82, feePaid:350},
+    {id:"S-1050", name:"Lydia Hayes", gender:"Female", dob:"2015-03-31", address:"25 Crown Close", className:"Grade 5B", stream:"Blue", parent:"Mrs. Esther Hayes", relation:"Mother", parentPhone:"+1 555-0130", parentEmail:"esther.hayes@email.com", status:"Active", attendance:98, average:91, feePaid:350}
+  ];
+
+  const classTeachers = {
+    "Grade 4A":"Ms. Penelope Hughes",
+    "Grade 5A":"Mrs. Sophia Bennett",
+    "Grade 5B":"Mrs. Lydia Hayes",
+    "Grade 5C":"Mr. Adrian Bell",
+    "Grade 5D":"Ms. Abigail Simmons",
+    "Grade 6A":"Ms. Grace Turner",
+    "Grade 6B":"Ms. Olivia Grant",
+    "Grade 6C":"Mr. Aaron Phillips",
+    "Grade 6D":"Mr. Connor Bailey",
+    "Grade 7A":"Mr. Samuel Wright",
+    "Grade 7B":"Mr. Ethan Foster",
+    "Grade 7C":"Ms. Chloe Evans",
+    "Grade 7D":"Ms. Natalie Ward",
+    "Grade 8A":"Mrs. Hannah Brooks",
+    "Grade 8B":"Mr. Marcus Reed",
+    "Grade 8C":"Mr. Noah Carter",
+    "Grade 8D":"Mrs. Leah Cooper",
+    "Grade 8E":"Mr. Julian Rivera",
+    "Grade 9A":"Mr. Daniel Price",
+    "Grade 9B":"Ms. Evelyn Cole",
+    "Grade 9C":"Mrs. Victoria James",
+    "Grade 9D":"Mr. Owen Mitchell",
+    "Grade 10A":"Mr. Isaac Morgan",
+    "Grade 10C":"Mr. Caleb Scott"
+  };
+  const subjects = [
+    ["Mathematics","Ms. Evelyn Cole","Block A-12",5],
+    ["English Language","Mr. Samuel Wright","Room 18",5],
+    ["Basic Science","Mrs. Lydia Hayes","Science Lab",4],
+    ["Social Studies","Ms. Chloe Evans","Block B-04",3],
+    ["Computer Studies","Mr. Marcus Reed","Lab 2",3],
+    ["Physical Education","Mr. Ethan Foster","Field",2]
+  ];
+  const dates = ["2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08"];
+
+  const makeRows = (items, renderer) => items.map(renderer).join("");
+  const detailItem = (label, value) => `<div class="detail-item"><h4>${label}</h4><p>${value}</p></div>`;
+  const money = (value) => `$${Number(value).toLocaleString()}`;
+
+  const studentGrades = (student) => subjects.map(([subject], index) => {
+    const testOne = Math.min(20, Math.max(10, Math.round(student.average / 5) - 1 + (index % 2)));
+    const testTwo = Math.min(20, Math.max(10, Math.round(student.average / 5) - (index % 3)));
+    const exam = Math.min(60, Math.max(30, student.average - testOne - testTwo + (index % 4)));
+    const total = testOne + testTwo + exam;
+    const grade = total >= 80 ? "A" : total >= 70 ? "B" : total >= 60 ? "C" : "D";
+    return {subject, testOne, testTwo, exam, total, grade};
+  });
+
+  const renderStudent = (studentId) => {
+    const student = students.find((item) => item.id === studentId) || students[0];
+    const grades = studentGrades(student);
+    const termFee = 350;
+    const balance = Math.max(termFee - student.feePaid, 0);
+
+    document.getElementById("studentName").textContent = student.name;
+    document.getElementById("studentMeta").innerHTML = `${student.id} &bull; ${student.className} ${student.stream}<br>${student.status}<br>Parent: ${student.parent}`;
+    document.getElementById("classStat").textContent = student.className.replace("Grade ", "");
+    document.getElementById("subjectStat").textContent = subjects.length;
+    document.getElementById("averageStat").textContent = `${student.average}%`;
+    document.getElementById("attendanceStat").textContent = `${student.attendance}%`;
+
+    document.getElementById("profileDetails").innerHTML = [
+      detailItem("Student ID", student.id),
+      detailItem("Full Name", student.name),
+      detailItem("Gender", student.gender),
+      detailItem("Date of Birth", student.dob),
+      detailItem("Address", student.address),
+      detailItem("Status", `<span class="badge ${student.status === "Active" ? "ok" : "warn"}">${student.status}</span>`)
+    ].join("");
+
+    document.getElementById("classDetails").innerHTML = [
+      detailItem("Class", student.className),
+      detailItem("Stream", student.stream),
+      detailItem("Class Teacher", classTeachers[student.className] || "Not Assigned"),
+      detailItem("Academic Year", "2026")
+    ].join("");
+    document.getElementById("subjectsBody").innerHTML = makeRows(subjects, ([subject, teacher, room, periods]) =>
+      `<tr><td>${subject}</td><td>${teacher}</td><td>${room}</td><td>${periods}</td></tr>`
+    );
+
+    document.getElementById("gradesBody").innerHTML = makeRows(grades, (item) =>
+      `<tr><td>${item.subject}</td><td>${item.testOne}</td><td>${item.testTwo}</td><td>${item.exam}</td><td>${item.total}</td><td><span class="badge ${item.grade === "A" ? "ok" : ""}">${item.grade}</span></td></tr>`
+    );
+
+    document.getElementById("attendanceBody").innerHTML = makeRows(dates, (date, index) => {
+      const [subject, teacher] = subjects[index % subjects.length];
+      const absent = student.attendance < 92 && index === 3;
+      return `<tr><td>${date}</td><td>${subject}</td><td>${teacher}</td><td><span class="badge ${absent ? "warn" : "ok"}">${absent ? "Absent" : "Present"}</span></td></tr>`;
+    });
+
+    document.getElementById("parentDetails").innerHTML = [
+      detailItem("Parent / Guardian", student.parent),
+      detailItem("Relationship", student.relation),
+      detailItem("Phone", student.parentPhone),
+      detailItem("Email", student.parentEmail)
+    ].join("");
+
+    document.getElementById("feesBody").innerHTML =
+      `<tr><td>${money(termFee)}</td><td>${money(student.feePaid)}</td><td>${money(balance)}</td><td><span class="badge ${balance === 0 ? "ok" : "warn"}">${balance === 0 ? "Paid" : "Partial"}</span></td></tr>`;
+
+    document.querySelectorAll(".student-link").forEach((button) => {
+      button.classList.toggle("active", button.dataset.studentId === student.id);
+    });
+  };
+
+  const roster = document.getElementById("studentRoster");
+  roster.innerHTML = students.map((student) =>
+    `<button class="student-link" type="button" data-student-id="${student.id}">${student.name}<span>${student.id} &bull; ${student.className}</span></button>`
+  ).join("");
+  roster.addEventListener("click", (event) => {
+    const button = event.target.closest(".student-link");
+    if (!button) return;
+    renderStudent(button.dataset.studentId);
+  });
+
+  renderStudent(students[0].id);
+</script>
 <script src="stylesheet/assets/sidebar.js"></script>
 <script src="stylesheet/assets/app.js"></script>
 </body>
