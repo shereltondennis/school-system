@@ -5,6 +5,40 @@
   <title>Teacher Portal</title>
   <link rel="stylesheet" href="stylesheet/assets/styles.css">
   <style>
+    .teacher-roster-title{
+      margin:18px 12px 8px;
+      color:#93c5fd;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .teacher-link{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:2px;
+      border:0;
+      border-radius:8px;
+      margin-bottom:4px;
+      padding:9px 12px;
+      background:transparent;
+      color:#cbd5e1;
+      cursor:pointer;
+      text-align:left;
+    }
+    .teacher-link:hover, .teacher-link.active{background:var(--sidebar-hover); color:#fff;}
+    .teacher-link span{font-size:12px; color:#94a3b8;}
+    .teacher-link.active span{color:#bfdbfe;}
+    .teacher-profile{
+      display:grid;
+      grid-template-columns:1.2fr repeat(4, 1fr);
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .teacher-summary h2{font-size:20px; margin-bottom:6px;}
+    .teacher-summary p{color:var(--muted); line-height:1.6; font-size:14px;}
     .tabs{display:flex; gap:8px; border-bottom:1px solid var(--border); margin-bottom:16px; flex-wrap:wrap;}
     .tab{padding:10px 14px; border-radius:8px 8px 0 0; cursor:pointer; color:var(--muted);}
     .tab.active{background:#fff; border:1px solid var(--border); border-bottom:1px solid #fff; color:var(--text); font-weight:600;}
@@ -16,18 +50,23 @@
     }
     .attendance-toggle button.active{background:var(--accent); color:#fff;}
     .attendance-toggle button.absent.active{background:#dc2626;}
+    @media(max-width:1100px){
+      .teacher-profile{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:700px){
+      .teacher-profile{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <h2>BrightFuture</h2>
+    <a href="darshboard.html">Dashboard</a>
+    <a href="teachers.html">Teachers</a>
     <a href="teacher-portal.html" class="active">Teacher Portal</a>
-    <a href="#subjects">My Subjects</a>
-    <a href="#classes">My Classes</a>
-    <a href="#students">My Students</a>
-    <a href="#grades">My Grades</a>
-    <a href="#attendance">My Attendance</a>
+    <div class="teacher-roster-title">Teacher List</div>
+    <div id="teacherRoster"></div>
     <a href="index.html">Logout</a>
   </aside>
   <main class="main">
@@ -36,12 +75,16 @@
       <button class="btn" type="button">Save Changes</button>
     </div>
 
-    <div class="grid cols-4" style="margin-bottom:16px;">
-      <div class="card stat"><h3>My Subjects</h3><p>3</p></div>
-      <div class="card stat"><h3>My Classes</h3><p>4</p></div>
-      <div class="card stat"><h3>Students</h3><p>128</p></div>
-      <div class="card stat"><h3>Attendance Today</h3><p>96%</p></div>
-    </div>
+    <section class="teacher-profile">
+      <div class="card teacher-summary">
+        <h2 id="teacherName">Teacher Name</h2>
+        <p id="teacherMeta">Teacher information</p>
+      </div>
+      <div class="card stat"><h3>Subjects</h3><p id="subjectCount">0</p></div>
+      <div class="card stat"><h3>Classes</h3><p id="classCount">0</p></div>
+      <div class="card stat"><h3>Students</h3><p id="studentCount">0</p></div>
+      <div class="card stat"><h3>Attendance Today</h3><p id="attendanceRate">0%</p></div>
+    </section>
 
     <div class="tabs">
       <div class="tab active">Subjects</div>
@@ -56,11 +99,7 @@
       <h3 style="margin-bottom:12px;">Assigned Subjects</h3>
       <table>
         <thead><tr><th>Code</th><th>Subject</th><th>Classes</th><th>Weekly Periods</th></tr></thead>
-        <tbody>
-          <tr><td>MATH101</td><td>Mathematics</td><td>7A, 8B, 9B</td><td>12</td></tr>
-          <tr><td>PHY101</td><td>Physics</td><td>9A, 9B</td><td>6</td></tr>
-          <tr><td>ICT101</td><td>Computer Studies</td><td>8B</td><td>3</td></tr>
-        </tbody>
+        <tbody id="subjectsBody"></tbody>
       </table>
     </div>
 
@@ -68,65 +107,40 @@
       <h3 style="margin-bottom:12px;">Assigned Classes</h3>
       <table>
         <thead><tr><th>Class</th><th>Subject</th><th>Room</th><th>Students</th><th>Next Lesson</th></tr></thead>
-        <tbody>
-          <tr><td>Grade 7A</td><td>Mathematics</td><td>Block A-12</td><td>34</td><td>Mon 8:00 AM</td></tr>
-          <tr><td>Grade 8B</td><td>Computer Studies</td><td>Lab 2</td><td>29</td><td>Tue 10:00 AM</td></tr>
-          <tr><td>Grade 9B</td><td>Physics</td><td>Block B-04</td><td>31</td><td>Wed 9:00 AM</td></tr>
-        </tbody>
+        <tbody id="classesBody"></tbody>
       </table>
     </div>
 
     <div class="card" id="students" style="margin-top:16px;">
-      <h3 style="margin-bottom:12px;">My Students</h3>
+      <h3 style="margin-bottom:12px;">Students Taught</h3>
       <div style="margin-bottom:12px;">
-        <input class="input" placeholder="Search my students by name, ID, or class...">
+        <input class="input" id="studentSearch" placeholder="Filter students by name, ID, or class...">
       </div>
       <table>
         <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Subject</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>S-1021</td><td>Amara Johnson</td><td>Grade 7A</td><td>Mathematics</td><td><span class="badge ok">Active</span></td></tr>
-          <tr><td>S-1022</td><td>David Mensah</td><td>Grade 9B</td><td>Physics</td><td><span class="badge warn">Needs Support</span></td></tr>
-          <tr><td>S-1023</td><td>Sarah Kamara</td><td>Grade 8B</td><td>Computer Studies</td><td><span class="badge ok">Active</span></td></tr>
-        </tbody>
+        <tbody id="studentsBody"></tbody>
       </table>
     </div>
 
     <div class="card" id="grades" style="margin-top:16px;">
       <div class="topbar" style="margin-bottom:12px;">
-        <h3>Grade Entry</h3>
+        <h3>Grade Information</h3>
         <button class="btn" type="button">Export Report</button>
       </div>
-      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px; max-width:none; margin-bottom:12px;">
-        <div><label>Class</label><select class="input"><option>Grade 9B</option><option>Grade 8B</option><option>Grade 7A</option></select></div>
-        <div><label>Subject</label><select class="input"><option>Mathematics</option><option>Physics</option><option>Computer Studies</option></select></div>
-        <div><label>Term</label><select class="input"><option>Term 2 - 2026</option><option>Term 1 - 2026</option></select></div>
-      </form>
       <table>
-        <thead><tr><th>Roll No</th><th>Student</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th><th></th></tr></thead>
-        <tbody>
-          <tr><td>S-1021</td><td>Amara Johnson</td><td>18</td><td>17</td><td>52</td><td>87</td><td><span class="badge ok">A</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
-          <tr><td>S-1022</td><td>David Mensah</td><td>14</td><td>12</td><td>40</td><td>66</td><td><span class="badge">C</span></td><td><button class="btn ghost" type="button">Edit</button></td></tr>
-        </tbody>
+        <thead><tr><th>Roll No</th><th>Student</th><th>Subject</th><th>Test 1 /20</th><th>Test 2 /20</th><th>Exam /60</th><th>Total /100</th><th>Grade</th></tr></thead>
+        <tbody id="gradesBody"></tbody>
       </table>
     </div>
 
     <div class="card" id="attendance" style="margin-top:16px;">
       <div class="topbar" style="margin-bottom:12px;">
-        <h3>Take Attendance</h3>
+        <h3>Attendance Information</h3>
         <button class="btn" type="button">Save Attendance</button>
       </div>
-      <form class="form" style="grid-template-columns:1fr 1fr 1fr; gap:12px; max-width:none; margin-bottom:12px;">
-        <div><label>Date</label><input class="input" type="date" value="2026-05-04"></div>
-        <div><label>Class</label><select class="input"><option>Grade 7A</option><option>Grade 8B</option><option>Grade 9B</option></select></div>
-        <div><label>Subject / Period</label><select class="input"><option>Mathematics - Period 1</option><option>Physics - Period 2</option><option>Computer Studies - Period 4</option></select></div>
-      </form>
       <table>
-        <thead><tr><th>#</th><th>Student</th><th>Roll No</th><th style="text-align:right;">Status</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>Amara Johnson</td><td>S-1021</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>
-          <tr><td>2</td><td>David Mensah</td><td>S-1022</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>
-          <tr><td>3</td><td>Sarah Kamara</td><td>S-1023</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>
-        </tbody>
+        <thead><tr><th>#</th><th>Student</th><th>Roll No</th><th>Class</th><th style="text-align:right;">Status</th></tr></thead>
+        <tbody id="attendanceBody"></tbody>
       </table>
     </div>
 
@@ -134,15 +148,130 @@
       <h3 style="margin-bottom:12px;">Teaching Schedule</h3>
       <table>
         <thead><tr><th>Day</th><th>Time</th><th>Class</th><th>Subject</th><th>Room</th></tr></thead>
-        <tbody>
-          <tr><td>Monday</td><td>8:00 AM</td><td>Grade 7A</td><td>Mathematics</td><td>Block A-12</td></tr>
-          <tr><td>Tuesday</td><td>10:00 AM</td><td>Grade 8B</td><td>Computer Studies</td><td>Lab 2</td></tr>
-          <tr><td>Wednesday</td><td>9:00 AM</td><td>Grade 9B</td><td>Physics</td><td>Block B-04</td></tr>
-        </tbody>
+        <tbody id="scheduleBody"></tbody>
       </table>
     </div>
   </main>
 </div>
+<script>
+  const teachers = [
+    {id:"T-201", name:"Ms. Evelyn Cole", email:"e.cole@school.edu", department:"Science", classTeacher:"Grade 9B", subjects:["Mathematics","Physics","Computer Studies"], classes:["Grade 7A","Grade 8B","Grade 9B"], students:128, attendance:"96%"},
+    {id:"T-202", name:"Mr. Samuel Wright", email:"s.wright@school.edu", department:"Languages", classTeacher:"Grade 7A", subjects:["English","Literature"], classes:["Grade 7A","Grade 8A"], students:91, attendance:"94%"},
+    {id:"T-203", name:"Mrs. Hannah Brooks", email:"h.brooks@school.edu", department:"Humanities", classTeacher:"Grade 8A", subjects:["History","Civic Education"], classes:["Grade 8A","Grade 9A"], students:84, attendance:"95%"},
+    {id:"T-204", name:"Mr. Daniel Price", email:"d.price@school.edu", department:"Science", classTeacher:"Grade 10A", subjects:["Chemistry","Biology"], classes:["Grade 9A","Grade 10A"], students:88, attendance:"97%"},
+    {id:"T-205", name:"Ms. Olivia Grant", email:"o.grant@school.edu", department:"Mathematics", classTeacher:"Grade 6B", subjects:["Mathematics"], classes:["Grade 6A","Grade 6B","Grade 7B"], students:112, attendance:"93%"},
+    {id:"T-206", name:"Mr. Marcus Reed", email:"m.reed@school.edu", department:"Technology", classTeacher:"Grade 8B", subjects:["Computer Studies","Robotics"], classes:["Grade 8B","Grade 9B"], students:67, attendance:"98%"},
+    {id:"T-207", name:"Mrs. Sophia Bennett", email:"s.bennett@school.edu", department:"Arts", classTeacher:"Grade 5A", subjects:["Fine Art","Creative Design"], classes:["Grade 5A","Grade 6A"], students:73, attendance:"92%"},
+    {id:"T-208", name:"Mr. Ethan Foster", email:"e.foster@school.edu", department:"Sports", classTeacher:"Grade 7B", subjects:["Physical Education","Health Science"], classes:["Grade 7B","Grade 8B","Grade 9A"], students:116, attendance:"96%"},
+    {id:"T-209", name:"Ms. Grace Turner", email:"g.turner@school.edu", department:"Languages", classTeacher:"Grade 6A", subjects:["French","English"], classes:["Grade 6A","Grade 7A"], students:82, attendance:"95%"},
+    {id:"T-210", name:"Mr. Isaac Morgan", email:"i.morgan@school.edu", department:"Business", classTeacher:"Grade 10B", subjects:["Business Studies","Economics"], classes:["Grade 10A","Grade 10B"], students:79, attendance:"91%"},
+    {id:"T-211", name:"Mrs. Lydia Hayes", email:"l.hayes@school.edu", department:"Science", classTeacher:"Grade 5B", subjects:["Basic Science","Agriculture"], classes:["Grade 5B","Grade 6B"], students:76, attendance:"97%"},
+    {id:"T-212", name:"Mr. Noah Carter", email:"n.carter@school.edu", department:"Mathematics", classTeacher:"Grade 8C", subjects:["Mathematics","Further Mathematics"], classes:["Grade 8C","Grade 10A"], students:86, attendance:"94%"},
+    {id:"T-213", name:"Ms. Chloe Evans", email:"c.evans@school.edu", department:"Humanities", classTeacher:"Grade 7C", subjects:["Geography","Social Studies"], classes:["Grade 7C","Grade 8C"], students:93, attendance:"96%"},
+    {id:"T-214", name:"Mr. Aaron Phillips", email:"a.phillips@school.edu", department:"Music", classTeacher:"Grade 6C", subjects:["Music","Performing Arts"], classes:["Grade 6C","Grade 7A"], students:64, attendance:"90%"},
+    {id:"T-215", name:"Mrs. Victoria James", email:"v.james@school.edu", department:"Languages", classTeacher:"Grade 9C", subjects:["English","Debate"], classes:["Grade 9C","Grade 10B"], students:78, attendance:"98%"},
+    {id:"T-216", name:"Mr. Caleb Scott", email:"c.scott@school.edu", department:"Science", classTeacher:"Grade 10C", subjects:["Physics","Integrated Science"], classes:["Grade 9C","Grade 10C"], students:81, attendance:"95%"},
+    {id:"T-217", name:"Ms. Natalie Ward", email:"n.ward@school.edu", department:"Technology", classTeacher:"Grade 7D", subjects:["ICT","Digital Literacy"], classes:["Grade 7D","Grade 8A"], students:89, attendance:"97%"},
+    {id:"T-218", name:"Mr. Adrian Bell", email:"a.bell@school.edu", department:"Humanities", classTeacher:"Grade 5C", subjects:["Religious Studies","Ethics"], classes:["Grade 5C","Grade 6C"], students:70, attendance:"93%"},
+    {id:"T-219", name:"Mrs. Leah Cooper", email:"l.cooper@school.edu", department:"Science", classTeacher:"Grade 8D", subjects:["Biology","Health Science"], classes:["Grade 8D","Grade 9D"], students:85, attendance:"96%"},
+    {id:"T-220", name:"Mr. Owen Mitchell", email:"o.mitchell@school.edu", department:"Mathematics", classTeacher:"Grade 9D", subjects:["Mathematics","Statistics"], classes:["Grade 9D","Grade 10C"], students:92, attendance:"94%"},
+    {id:"T-221", name:"Ms. Penelope Hughes", email:"p.hughes@school.edu", department:"Arts", classTeacher:"Grade 4A", subjects:["Drama","Creative Writing"], classes:["Grade 4A","Grade 5A"], students:68, attendance:"95%"},
+    {id:"T-222", name:"Mr. Julian Rivera", email:"j.rivera@school.edu", department:"Languages", classTeacher:"Grade 8E", subjects:["Spanish","French"], classes:["Grade 8E","Grade 9A"], students:74, attendance:"92%"},
+    {id:"T-223", name:"Mrs. Maya Peterson", email:"m.peterson@school.edu", department:"Business", classTeacher:"Grade 10D", subjects:["Accounting","Commerce"], classes:["Grade 10D","Grade 9D"], students:77, attendance:"97%"},
+    {id:"T-224", name:"Mr. Connor Bailey", email:"c.bailey@school.edu", department:"Sports", classTeacher:"Grade 6D", subjects:["Physical Education","Sports Science"], classes:["Grade 6D","Grade 7D"], students:101, attendance:"96%"},
+    {id:"T-225", name:"Ms. Abigail Simmons", email:"a.simmons@school.edu", department:"Guidance", classTeacher:"Grade 5D", subjects:["Life Skills","Counselling"], classes:["Grade 5D","Grade 6A"], students:72, attendance:"98%"}
+  ];
+
+  const rooms = ["Block A-12","Block B-04","Lab 2","Room 18","Science Lab","Studio 1"];
+  const days = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const times = ["8:00 AM","9:00 AM","10:00 AM","11:30 AM","1:00 PM"];
+  const names = ["Amara Johnson","David Mensah","Sarah Kamara","Leo Martin","Aisha Conteh","Noah Allen"];
+
+  const makeRows = (items, renderer) => items.map(renderer).join("");
+  const teacherClassRows = (teacher) => teacher.classes.map((className, index) => ({
+    className,
+    subject: teacher.subjects[index % teacher.subjects.length],
+    room: rooms[(Number(teacher.id.slice(-1)) + index) % rooms.length],
+    students: Math.round(teacher.students / teacher.classes.length) + index,
+    next: `${days[index]} ${times[index]}`
+  }));
+  const teacherStudentRows = (teacher) => names.map((name, index) => ({
+    id: `S-${1021 + index}`,
+    name,
+    className: teacher.classes[index % teacher.classes.length],
+    subject: teacher.subjects[index % teacher.subjects.length],
+    status: index === 1 ? "Needs Support" : "Active"
+  }));
+
+  const renderTeacher = (teacherId) => {
+    const teacher = teachers.find((item) => item.id === teacherId) || teachers[0];
+    const classRows = teacherClassRows(teacher);
+    const studentRows = teacherStudentRows(teacher);
+
+    document.getElementById("teacherName").textContent = teacher.name;
+    document.getElementById("teacherMeta").innerHTML = `${teacher.id} &bull; ${teacher.department}<br>${teacher.email}<br>Class Teacher: ${teacher.classTeacher}`;
+    document.getElementById("subjectCount").textContent = teacher.subjects.length;
+    document.getElementById("classCount").textContent = teacher.classes.length;
+    document.getElementById("studentCount").textContent = teacher.students;
+    document.getElementById("attendanceRate").textContent = teacher.attendance;
+
+    document.getElementById("subjectsBody").innerHTML = makeRows(teacher.subjects, (subject, index) =>
+      `<tr><td>${subject.slice(0, 3).toUpperCase()}10${index + 1}</td><td>${subject}</td><td>${teacher.classes.join(", ")}</td><td>${(index + 3) * 3}</td></tr>`
+    );
+    document.getElementById("classesBody").innerHTML = makeRows(classRows, (item) =>
+      `<tr><td>${item.className}</td><td>${item.subject}</td><td>${item.room}</td><td>${item.students}</td><td>${item.next}</td></tr>`
+    );
+    document.getElementById("studentsBody").innerHTML = makeRows(studentRows, (student) =>
+      `<tr><td>${student.id}</td><td>${student.name}</td><td>${student.className}</td><td>${student.subject}</td><td><span class="badge ${student.status === "Active" ? "ok" : "warn"}">${student.status}</span></td></tr>`
+    );
+    document.getElementById("gradesBody").innerHTML = makeRows(studentRows.slice(0, 4), (student, index) => {
+      const testOne = 14 + index;
+      const testTwo = 13 + index;
+      const exam = 39 + (index * 4);
+      const total = testOne + testTwo + exam;
+      const grade = total >= 80 ? "A" : total >= 70 ? "B" : total >= 60 ? "C" : "D";
+      return `<tr><td>${student.id}</td><td>${student.name}</td><td>${student.subject}</td><td>${testOne}</td><td>${testTwo}</td><td>${exam}</td><td>${total}</td><td><span class="badge ${grade === "A" ? "ok" : ""}">${grade}</span></td></tr>`;
+    });
+    document.getElementById("attendanceBody").innerHTML = makeRows(studentRows, (student, index) =>
+      `<tr><td>${index + 1}</td><td>${student.name}</td><td>${student.id}</td><td>${student.className}</td><td style="text-align:right;"><div class="attendance-toggle"><button class="active" type="button">Present</button><button type="button">Absent</button></div></td></tr>`
+    );
+    document.getElementById("scheduleBody").innerHTML = makeRows(classRows, (item, index) =>
+      `<tr><td>${days[index]}</td><td>${times[index]}</td><td>${item.className}</td><td>${item.subject}</td><td>${item.room}</td></tr>`
+    );
+
+    document.querySelectorAll(".teacher-link").forEach((button) => {
+      button.classList.toggle("active", button.dataset.teacherId === teacher.id);
+    });
+  };
+
+  const roster = document.getElementById("teacherRoster");
+  roster.innerHTML = teachers.map((teacher) =>
+    `<button class="teacher-link" type="button" data-teacher-id="${teacher.id}">${teacher.name}<span>${teacher.id} &bull; ${teacher.department}</span></button>`
+  ).join("");
+  roster.addEventListener("click", (event) => {
+    const button = event.target.closest(".teacher-link");
+    if (!button) return;
+    renderTeacher(button.dataset.teacherId);
+  });
+
+  document.getElementById("attendanceBody").addEventListener("click", (event) => {
+    const button = event.target.closest(".attendance-toggle button");
+    if (!button) return;
+    const group = button.closest(".attendance-toggle");
+    group.querySelectorAll("button").forEach((item) => item.classList.remove("active", "absent"));
+    button.classList.add("active");
+    if (button.textContent.trim() === "Absent") button.classList.add("absent");
+  });
+
+  document.getElementById("studentSearch").addEventListener("input", (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    document.querySelectorAll("#studentsBody tr").forEach((row) => {
+      row.classList.toggle("is-hidden", !row.textContent.toLowerCase().includes(query));
+    });
+  });
+
+  renderTeacher(teachers[0].id);
+</script>
 <script src="stylesheet/assets/sidebar.js"></script>
 <script src="stylesheet/assets/app.js"></script>
 </body>
